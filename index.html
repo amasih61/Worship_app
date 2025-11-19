@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worship App</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      color: #e5e7eb;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 999px;
+    }
+
+    .glass {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.85));
+      backdrop-filter: blur(22px);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .chip {
+      @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium border border-slate-600/60 bg-slate-800/60;
+    }
+
+    .btn-primary {
+      @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white transition;
+    }
+
+    .btn-ghost {
+      @apply inline-flex items-center justify-center rounded-xl px-3 py-2 text-xs font-medium bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/80 text-slate-200 transition;
+    }
+
+    .badge-pill {
+      @apply text-[10px] inline-flex items-center px-2 py-0.5 rounded-full bg-slate-800 border border-slate-600 text-slate-300;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-slate-100">
+  <div class="max-w-4xl mx-auto px-3 py-4 sm:py-6">
+    <header class="mb-4">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
+            <i class="fa-solid fa-music text-blue-400"></i>
+            Worship App
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-400">
+            Songs • Aradhana • Prabhu Bhoj • Pavitra Bible
+          </p>
+        </div>
+        <button id="installPwaButton"
+          class="hidden btn-ghost text-[11px] sm:text-xs gap-1 whitespace-nowrap">
+          <i class="fa-solid fa-download text-blue-400"></i>
+          Install App
+        </button>
+      </div>
+
+      <div
+        class="mt-4 grid grid-cols-3 sm:grid-cols-5 gap-2 text-[11px] sm:text-xs font-medium bg-slate-900/70 rounded-2xl p-1 border border-slate-800">
+        <button data-screen="home"
+          class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 bg-slate-100 text-slate-900">
+          <i class="fa-solid fa-list-ul text-[11px]"></i>
+          <span>Songs</span>
+        </button>
+        <button data-screen="aradhana"
+          class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
+          <i class="fa-solid fa-hands-praying text-[11px]"></i>
+          <span>Aradhana</span>
+        </button>
+        <button data-screen="prabhuBhoj"
+          class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
+          <i class="fa-solid fa-bread-slice text-[11px]"></i>
+          <span>Prabhu Bhoj</span>
+        </button>
+        <button data-screen="bible"
+          class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
+          <i class="fa-solid fa-book-bible text-[11px]"></i>
+          <span>Bible</span>
+        </button>
+        <button data-screen="admin"
+          class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
+          <i class="fa-solid fa-lock text-[11px]"></i>
+          <span>Admin</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="glass rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-900/40 space-y-4">
+
+      <section id="homeScreen" class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="relative flex-1">
+            <input id="searchInput" type="text" placeholder="Search song / number / keyword..."
+              class="w-full rounded-2xl bg-slate-900/80 border border-slate-700 px-4 py-2.5 text-sm pr-9 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-500">
+            <span class="absolute right-3 top-2.5 text-slate-500 text-xs">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px]">
+            <select id="languageFilter"
+              class="rounded-2xl bg-slate-900/80 border border-slate-700 px-3 py-2 text-[11px] focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option value="all">All</option>
+              <option value="hindi">Hindi</option>
+              <option value="hinglish">Hinglish</option>
+            </select>
+            <button id="favoriteToggle"
+              class="btn-ghost h-9 px-3 flex items-center gap-1 text-[11px]">
+              <i class="fa-regular fa-star"></i>
+              <span>Favourites</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="songList"
+          class="max-h-[60vh] overflow-y-auto scrollbar-thin space-y-2 text-sm">
+          <p class="text-xs text-slate-400">
+            Loading songs...
+          </p>
+        </div>
+      </section>
+
+      <section id="songDetailScreen" class="hidden space-y-4">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p id="songSerial"
+              class="badge-pill mb-1 flex items-center gap-1">
+              <i class="fa-solid fa-hashtag text-[9px]"></i>
+              <span></span>
+            </p>
+            <h2 id="songTitleHindi" class="text-lg font-semibold"></h2>
+            <p id="songTitleHinglish" class="text-xs text-slate-400"></p>
+          </div>
+          <div class="flex flex-col items-end gap-2">
+            <button id="toggleLanguageBtn" class="btn-ghost text-[11px]">
+              Hindi
+            </button>
+            <button id="favoriteSongBtn"
+              class="btn-ghost text-[11px] flex items-center gap-1">
+              <i class="fa-regular fa-star"></i>
+              <span>Favourite</span>
+            </button>
+          </div>
+        </div>
+
+        <article id="lyricsContainer"
+          class="text-[13px] leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto scrollbar-thin border border-slate-700/70 rounded-2xl p-3 bg-slate-950/60">
+        </article>
+      </section>
+
+      <section id="aradhanaScreen" class="hidden space-y-3 text-sm">
+        <h2 class="text-lg font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-hands-praying text-blue-400"></i>
+          Aradhana Section
+        </h2>
+        <p class="text-slate-300 text-xs">
+          Yahaan tum future me Aradhana ke special geet / order of service / notes add kar sakte ho. Filhaal placeholder text hai.
+        </p>
+      </section>
+
+      <section id="prabhuBhojScreen" class="hidden space-y-3 text-sm">
+        <h2 class="text-lg font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-bread-slice text-blue-400"></i>
+          Prabhu Bhoj Section
+        </h2>
+        <p class="text-slate-300 text-xs">
+          Yahaan Prabhu Bhoj ke geet, readings, ya instructions laa sakte ho. Abhi basic placeholder hai.
+        </p>
+      </section>
+
+      <section id="bibleScreen" class="hidden space-y-4">
+        <div class="sticky top-0 pb-2 bg-gradient-to-b from-slate-900/95 to-slate-900/0 z-10">
+          <h2 class="text-lg font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-book-bible text-blue-400"></i>
+            Pavitra Bible (Hindi)
+          </h2>
+          
+          <div class="mt-3 flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+            
+            <div class="flex-1 order-1">
+              <label class="block text-[10px] text-slate-400 mb-1">Book</label>
+              <select id="bookSelect"
+                class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Book select karo…</option>
+              </select>
+            </div>
+
+            <div class="w-full sm:w-28 order-2">
+              <label class="block text-[10px] text-slate-400 mb-1">Chapter</label>
+              <select id="chapterSelect"
+                class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-2 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled>
+                <option value="">Chapter…</option>
+              </select>
+            </div>
+
+            <div class="w-full sm:w-24 order-3">
+              <label class="block text-[10px] text-slate-400 mb-1">Verse</label>
+              <select id="verseSelect"
+                class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-2 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled>
+                <option value="">Verse…</option>
+              </select>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div id="bibleContent"
+          class="text-[13px] leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto scrollbar-thin border border-slate-700/70 rounded-2xl p-3 bg-slate-950/60">
+          <p class="text-slate-400 text-xs">
+            Kripya pehle koi Book select karein.
+          </p>
+        </div>
+      </section>
+
+      <section id="adminScreen" class="hidden space-y-4 text-sm">
+        <h2 class="text-lg font-semibold flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-blue-400"></i>
+          Admin Panel
+        </h2>
+
+        <div id="adminLoginBox" class="space-y-2">
+          <p class="text-xs text-slate-400">
+            Sirf authorized log ke liye. PIN daalo:
+          </p>
+          <div class="flex gap-2">
+            <input id="adminPinInput" type="password" maxlength="6"
+              class="flex-1 rounded-xl bg-slate-950/80 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="PIN..." />
+            <button id="adminLoginBtn" class="btn-primary text-xs px-3">
+              Login
+            </button>
+          </div>
+          <p id="adminLoginError" class="hidden text-[11px] text-red-400">
+            Galat PIN. Dobara try karo.
+          </p>
+        </div>
+
+        <div id="adminContent" class="hidden space-y-4">
+          <p class="text-xs text-slate-400 flex items-center justify-between">
+            <span>Logged in as <span class="font-semibold">Admin</span></span>
+            <button id="adminLogoutBtn" class="btn-ghost text-[10px]">
+              Logout
+            </button>
+          </p>
+
+          <div class="border border-slate-700 rounded-2xl p-3 bg-slate-950/70 space-y-3">
+            <h3 class="font-semibold text-sm flex items-center gap-2">
+              <i class="fa-solid fa-plus text-emerald-400 text-xs"></i>
+              Naya Geet Add karo
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="text-[11px] text-slate-400">Serial Number</label>
+                <input id="songSerialInput" type="number"
+                  class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label class="text-[11px] text-slate-400">Title (Hindi)</label>
+                <input id="songTitleHindiInput" type="text"
+                  class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label class="text-[11px] text-slate-400">Title (Hinglish)</label>
+                <input id="songTitleHinglishInput" type="text"
+                  class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="text-[11px] text-slate-400">Lyrics (Hindi)</label>
+                <textarea id="lyricsHindiInput" rows="4"
+                  class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+              </div>
+              <div>
+                <label class="text-[11px] text-slate-400">Lyrics (Hinglish)</label>
+                <textarea id="lyricsHinglishInput" rows="4"
+                  class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+              </div>
+            </div>
+
+            <button id="addSongBtn" class="btn-primary w-full text-xs">
+              Save Song
+            </button>
+            <p id="adminStatusMsg" class="text-[11px] text-emerald-400 hidden"></p>
+          </div>
+
+          <div class="text-[11px] text-slate-500">
+            Note: Sab geet Firestore ke <code class="text-[10px] bg-slate-900 px-1 rounded">songs</code> collection me
+            save honge.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-4 text-[10px] text-center text-slate-500">
+      Made for church worship • 0₹ setup • Firebase + Netlify
+    </footer>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ========== FIREBASE CONFIG ==========
+    
+    // ⭐️ YAHAN AAPKA CONFIG DAAL DIYA HAI ⭐️
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbn4wCltG1YrrfmUeoOmOvzzQsyxZVkhY",
+      authDomain: "worship-3eedf.firebaseapp.com",
+      projectId: "worship-3eedf",
+      storageBucket: "worship-3eedf.firebasestorage.app",
+      messagingSenderId: "1000732372247",
+      appId: "1:1000732372247:web:ec746fc5db5dabd35a1b52"
+    };
+
+    // --- YAHAN SE NEECHE KUCH CHANGE MAT KARNA ---
+
+    // Global 'db' variable define kar rahe hain
+    let db;
+    let app;
+
+    try {
+      app = firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore(); // db ko yahan assign kar rahe hain
+    } catch (e) {
+      console.error("Firebase initialization error:", e);
+      if (e.code === 'INVALID_CONFIG_KEYS') {
+        alert("FIREBASE CONFIG ERROR: \n\nAapne 'firebaseConfig' object ko 'index.html' file mein update nahi kiya hai. \n\nAapke songs tab tak load nahi honge jab tak aap Firebase project se sahi keys daal nahi dete.");
+      }
+      // Hide loading text and show error
+      const songListError = document.getElementById('songList');
+      if (songListError) {
+        songListError.innerHTML = '<p class="text-xs text-red-400">Firebase se connect nahi ho paaya. Kya aapne firebaseConfig update kiya?</p>';
+      }
+    }
+
+
+    // ========== DOM ELEMENTS ==========
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    const screens = {
+      home: document.getElementById('homeScreen'),
+      songDetail: document.getElementById('songDetailScreen'),
+      aradhana: document.getElementById('aradhanaScreen'),
+      prabhuBhoj: document.getElementById('prabhuBhojScreen'),
+      bible: document.getElementById('bibleScreen'),
+      admin: document.getElementById('adminScreen')
+    };
+
+    const searchInput = document.getElementById('searchInput');
+    const languageFilter = document.getElementById('languageFilter');
+    const favoriteToggle = document.getElementById('favoriteToggle');
+    const songList = document.getElementById('songList');
+
+    // Song detail
+    const songDetailScreen = screens.songDetail;
+    const songSerialEl = document.getElementById('songSerial').querySelector('span');
+    const songTitleHindiEl = document.getElementById('songTitleHindi');
+    const songTitleHinglishEl = document.getElementById('songTitleHinglish');
+    const lyricsContainer = document.getElementById('lyricsContainer');
+    const toggleLanguageBtn = document.getElementById('toggleLanguageBtn');
+    const favoriteSongBtn = document.getElementById('favoriteSongBtn');
+
+    // Bible
+    const bibleScreen = screens.bible;
+    const bookSelect = document.getElementById('bookSelect');
+    const chapterSelect = document.getElementById('chapterSelect');
+    const verseSelect = document.getElementById('verseSelect');
+    const bibleContent = document.getElementById('bibleContent');
+
+    // Admin
+    const adminScreen = screens.admin;
+    const adminLoginBox = document.getElementById('adminLoginBox');
+    const adminContent = document.getElementById('adminContent');
+    const adminPinInput = document.getElementById('adminPinInput');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const adminLoginError = document.getElementById('adminLoginError');
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+    const songSerialInput = document.getElementById('songSerialInput');
+    const songTitleHindiInput = document.getElementById('songTitleHindiInput');
+    const songTitleHinglishInput = document.getElementById('songTitleHinglishInput');
+    const lyricsHindiInput = document.getElementById('lyricsHindiInput');
+    const lyricsHinglishInput = document.getElementById('lyricsHinglishInput');
+    const addSongBtn = document.getElementById('addSongBtn');
+    const adminStatusMsg = document.getElementById('adminStatusMsg');
+
+    // PWA install
+    const installPwaButton = document.getElementById('installPwaButton');
+
+    // ========== STATE ==========
+
+    let allSongs = [];
+    let filteredSongs = [];
+    let favoritesOnly = false;
+    let currentSong = null;
+    let currentLanguage = 'hindi'; // 'hindi' | 'hinglish'
+    let bibleData = [];
+    let currentBibleBook = null;
+    const ADMIN_PIN = '1844';
+    let isAdmin = false;
+
+    // ========== HELPERS ==========
+
+    function getFavoriteIds() {
+      try {
+        const raw = localStorage.getItem('favoriteSongs');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setFavoriteIds(ids) {
+      localStorage.setItem('favoriteSongs', JSON.stringify(ids));
+    }
+
+    function isFavorite(id) {
+      return getFavoriteIds().includes(id);
+    }
+
+    function toggleFavorite(id) {
+      const ids = getFavoriteIds();
+      const index = ids.indexOf(id);
+      if (index === -1) {
+        ids.push(id);
+      } else {
+        ids.splice(index, 1);
+      }
+      setFavoriteIds(ids);
+    }
+
+    function setActiveTab(screenName) {
+      tabs.forEach(btn => {
+        if (btn.dataset.screen === screenName) {
+          btn.classList.add('bg-slate-100', 'text-slate-900');
+        } else {
+          btn.classList.remove('bg-slate-100', 'text-slate-900');
+        }
+      });
+    }
+
+    function showScreen(screenName) {
+      // hide all
+      Object.values(screens).forEach(sec => sec.classList.add('hidden'));
+      // home -> list, not detail
+      if (screenName === 'home') {
+        screens.home.classList.remove('hidden');
+        songDetailScreen.classList.add('hidden');
+      } else if (screenName === 'songDetail') {
+        screens.home.classList.add('hidden');
+        songDetailScreen.classList.remove('hidden');
+      } else {
+        const sec = screens[screenName];
+        if (sec) sec.classList.remove('hidden');
+        songDetailScreen.classList.add('hidden');
+      }
+      setActiveTab(screenName === 'songDetail' ? 'home' : screenName);
+      window.scrollTo(0, 0);
+    }
+
+    // ========== SONGS (FIRESTORE) ==========
+
+    async function loadSongs() {
+      // Check karte hain ki 'db' properly initialize hua ya nahi
+      if (typeof db === 'undefined') {
+        console.log("db not initialized. Skipping loadSongs.");
+        return; // Agar db nahi hai toh function rok do
+      }
+      try {
+        const snapshot = await db.collection('songs').orderBy('serialNumber').get();
+        allSongs = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        applySongFilters();
+      } catch (error) {
+        console.error('Error loading songs:', error);
+        songList.innerHTML = '<p class="text-xs text-red-400">Songs load nahi ho paaye. Check console (F12).</p>';
+      }
+    }
+
+    function applySongFilters() {
+      const query = (searchInput.value || '').toLowerCase();
+      const lang = languageFilter.value;
+      const favIds = getFavoriteIds();
+
+      filteredSongs = allSongs.filter(song => {
+        // favourite filter
+        if (favoritesOnly && !favIds.includes(song.id)) return false;
+
+        // language filter check
+        if (lang === 'hindi' && !song.title_hindi) return false;
+        if (lang === 'hinglish' && !song.title_hinglish) return false;
+
+        // search filter
+        if (!query) return true;
+        const num = (song.serialNumber || '').toString();
+        const h = (song.title_hindi || '').toLowerCase();
+        const r = (song.title_hinglish || '').toLowerCase();
+        const lh = (song.lyrics_hindi || '').toLowerCase();
+        const lr = (song.lyrics_hinglish || '').toLowerCase();
+
+        return (
+          num.includes(query) ||
+          h.includes(query) ||
+          r.includes(query) ||
+          lh.includes(query) ||
+          lr.includes(query)
+        );
+      });
+
+      renderSongList();
+    }
+
+    function renderSongList() {
+      if (!filteredSongs.length && allSongs.length > 0) { // Check added ki songs load hue but filter match nahi hua
+        songList.innerHTML = '<p class="text-xs text-slate-400">Is filter se koi geet nahi mila.</p>';
+        return;
+      }
+      
+      if (!allSongs.length) { // Yeh tabhi dikhega jab allSongs array hi khaali hai
+        songList.innerHTML = '<p class="text-xs text-slate-400">Loading songs...</p>'; // Ya error message loadSongs se aa jayega
+        return;
+      }
+
+      const favIds = getFavoriteIds();
+
+      songList.innerHTML = '';
+      filteredSongs.forEach(song => {
+        const li = document.createElement('button');
+        li.className =
+          'w-full flex items-start gap-3 px-3 py-2 rounded-2xl bg-slate-900/70 hover:bg-slate-800/80 border border-slate-800 text-left transition';
+        li.innerHTML = `
+          <div class="mt-0.5">
+            <span class="badge-pill flex items-center gap-1">
+              <i class="fa-solid fa-hashtag text-[9px]"></i>
+              <span>${song.serialNumber ?? ''}</span>
+            </span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium truncate">
+              ${song.title_hindi || 'Untitled'}
+            </p>
+            <p class="text-[11px] text-slate-400 truncate">
+              ${song.title_hinglish || ''}
+            </p>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <span class="text-[10px] text-slate-500 uppercase">
+              Song
+            </span>
+            <i class="${favIds.includes(song.id) ? 'fa-solid' : 'fa-regular'} fa-star text-[11px] ${favIds.includes(song.id) ? 'text-yellow-400' : 'text-slate-500'}"></i>
+          </div>
+        `;
+        li.addEventListener('click', () => openSongDetail(song.id));
+        songList.appendChild(li);
+      });
+    }
+
+    function openSongDetail(id) {
+      const song = allSongs.find(s => s.id === id);
+      if (!song) return;
+      currentSong = song;
+      currentLanguage = 'hindi';
+
+      songSerialEl.textContent = song.serialNumber ?? '';
+      songTitleHindiEl.textContent = song.title_hindi || '';
+      songTitleHinglishEl.textContent = song.title_hinglish || '';
+
+      toggleLanguageBtn.textContent = 'Hindi';
+      renderLyrics();
+
+      const fav = isFavorite(song.id);
+      updateFavoriteButton(fav);
+
+      showScreen('songDetail');
+    }
+
+    function renderLyrics() {
+      if (!currentSong) return;
+      let text =
+        currentLanguage === 'hindi'
+          ? currentSong.lyrics_hindi || ''
+          : currentSong.lyrics_hinglish || '';
+      if (!text) {
+        text = 'Lyrics available nahi hain.';
+      }
+      lyricsContainer.textContent = text;
+    }
+
+    function updateFavoriteButton(isFav) {
+      favoriteSongBtn.classList.toggle('text-yellow-300', isFav);
+      favoriteSongBtn.classList.toggle('text-slate-200', !isFav);
+      favoriteSongBtn.innerHTML = `
+        <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+        <span>${isFav ? 'Favourite hai' : 'Favourite banao'}</span>
+      `;
+    }
+
+    // ========== BIBLE ==========
+// Bible functions for bible.json structure:
+// [
+//   {
+//     "book": "उत्पत्ति",
+//     "chapters": [
+//       {
+//         "chapter": 1,
+//         "verses": [
+//           { "verse": 1, "text": "..." }
+//         ]
+//       }
+//     ]
+//   }
+// ]
+
+async function loadBibleData() {
+  try {
+    const response = await fetch('./bible.json');
+    if (!response.ok) throw new Error('Bible data file not found');
+
+    // bible.json is a plain array (not wrapped in { bible: [...] })
+    bibleData = await response.json();
+
+    populateBookSelect();
+
+    // Default: first book + first chapter load karo (agar available ho)
+    if (bibleData.length > 0) {
+      bookSelect.value = "0";
+      handleBookChange(true);
+    }
+  } catch (error) {
+    console.error('Bible load error:', error);
+    bibleContent.innerHTML =
+      '<p class="text-xs text-red-400 text-center">Bible data load nahi ho paaya. bible.json ko check karein.</p>';
+  }
+}
+
+function populateBookSelect() {
+  bookSelect.innerHTML = '<option value="">Book select karo…</option>';
+
+  bibleData.forEach((book, index) => {
+    const opt = document.createElement('option');
+    opt.value = index;
+    opt.textContent = book.book; // Hindi book name
+    bookSelect.appendChild(opt);
+  });
+
+  chapterSelect.innerHTML = '<option value="">Chapter…</option>';
+  chapterSelect.disabled = true;
+  verseSelect.innerHTML = '<option value="">Verse…</option>';
+  verseSelect.disabled = true;
+
+  bibleContent.innerHTML =
+    '<p class="text-xs text-slate-400">Kripya pehle koi Book select karein.</p>';
+}
+
+function handleBookChange(isDefaultLoad = false) {
+  const index = parseInt(bookSelect.value, 10);
+  if (isNaN(index)) {
+    currentBibleBook = null;
+    chapterSelect.innerHTML = '<option value="">Chapter…</option>';
+    chapterSelect.disabled = true;
+    verseSelect.innerHTML = '<option value="">Verse…</option>';
+    verseSelect.disabled = true;
+    bibleContent.innerHTML =
+      '<p class="text-xs text-slate-400">Kripya pehle koi Book select karein.</p>';
+    return;
+  }
+
+  currentBibleBook = bibleData[index];
+
+  // chapter dropdown
+  chapterSelect.disabled = false;
+  chapterSelect.innerHTML = '<option value="">Chapter…</option>';
+  currentBibleBook.chapters.forEach(ch => {
+    const opt = document.createElement('option');
+    opt.value = ch.chapter;       // number like 1,2,3...
+    opt.textContent = ch.chapter;
+    chapterSelect.appendChild(opt);
+  });
+
+  // verse reset
+  verseSelect.innerHTML = '<option value="">Verse…</option>';
+  verseSelect.disabled = true;
+
+  if (isDefaultLoad && currentBibleBook.chapters.length > 0) {
+    chapterSelect.value = String(currentBibleBook.chapters[0].chapter);
+    handleChapterChange();
+  } else if (!isDefaultLoad) {
+    bibleContent.innerHTML =
+      '<p class="text-xs text-slate-400">Ab chapter select karein.</p>';
+  }
+}
+
+function handleChapterChange() {
+  if (!currentBibleBook) return;
+  const chapterNum = parseInt(chapterSelect.value, 10);
+
+  const chapterObj = currentBibleBook.chapters.find(
+    ch => ch.chapter === chapterNum
+  );
+
+  if (!chapterObj) {
+    verseSelect.innerHTML = '<option value="">Verse…</option>';
+    verseSelect.disabled = true;
+    bibleContent.innerHTML =
+      '<p class="text-xs text-slate-400">Ab chapter select karein.</p>';
+    return;
+  }
+
+  // verse dropdown
+  verseSelect.disabled = false;
+  verseSelect.innerHTML = '<option value="">All verses</option>';
+  chapterObj.verses.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.verse;
+    opt.textContent = v.verse;
+    verseSelect.appendChild(opt);
+  });
+
+  renderVerses(chapterObj, null);
+}
+
+function handleVerseChange() {
+  if (!currentBibleBook) return;
+  const chapterNum = parseInt(chapterSelect.value, 10);
+  const chapterObj = currentBibleBook.chapters.find(
+    ch => ch.chapter === chapterNum
+  );
+  if (!chapterObj) return;
+
+  const verseNum = parseInt(verseSelect.value, 10);
+  if (isNaN(verseNum)) {
+    renderVerses(chapterObj, null);
+  } else {
+    renderVerses(chapterObj, verseNum);
+  }
+}
+
+function renderVerses(chapterObj, singleVerseNumber) {
+  bibleContent.innerHTML = '';
+
+  const title = document.createElement('h3');
+  title.className =
+    'text-sm font-semibold text-slate-100 mb-2';
+  title.textContent = `${currentBibleBook.book} ${chapterObj.chapter}`;
+  bibleContent.appendChild(title);
+
+  const container = document.createElement('div');
+  container.className =
+    'space-y-1 text-[13px] leading-relaxed';
+
+  const versesToShow = singleVerseNumber
+    ? chapterObj.verses.filter(v => v.verse === singleVerseNumber)
+    : chapterObj.verses;
+
+  versesToShow.forEach(v => {
+    const p = document.createElement('p');
+    p.innerHTML = `<span class="text-[10px] text-blue-400 mr-1 font-semibold">${v.verse}.</span>${v.text}`;
+    container.appendChild(p);
+  });
+
+  bibleContent.appendChild(container);
+}
+
+// ========== (BIBLE FUNCTIONS END) ==========
+
+
+
+    // ========== ADMIN ==========
+
+    function updateAdminUI() {
+      if (isAdmin) {
+        adminLoginBox.classList.add('hidden');
+        adminContent.classList.remove('hidden');
+      } else {
+        adminLoginBox.classList.remove('hidden');
+        adminContent.classList.add('hidden');
+      }
+    }
+
+    function showAdminStatus(msg, isError = false) {
+      adminStatusMsg.textContent = msg;
+      adminStatusMsg.classList.remove('hidden');
+      adminStatusMsg.classList.toggle('text-red-400', isError);
+      adminStatusMsg.classList.toggle('text-emerald-400', !isError);
+      setTimeout(() => {
+        adminStatusMsg.classList.add('hidden');
+      }, 3000);
+    }
+
+    async function addSong() {
+      if (typeof db === 'undefined') {
+        showAdminStatus('Firebase DB connected nahi hai.', true);
+        return;
+      }
+      
+      const serial = parseInt(songSerialInput.value, 10);
+      const titleH = songTitleHindiInput.value.trim();
+      const titleR = songTitleHinglishInput.value.trim();
+      const lyrH = lyricsHindiInput.value.trim();
+      const lyrR = lyricsHinglishInput.value.trim();
+
+      if (!serial || !titleH) {
+        showAdminStatus('Serial number & Hindi title required hai.', true);
+        return;
+      }
+
+      try {
+        await db.collection('songs').add({
+          serialNumber: serial,
+          title_hindi: titleH,
+          title_hinglish: titleR,
+          lyrics_hindi: lyrH,
+          lyrics_hinglish: lyrR
+        });
+
+        showAdminStatus('Song save ho gaya ✅');
+        songSerialInput.value = '';
+        songTitleHindiInput.value = '';
+        songTitleHinglishInput.value = '';
+        lyricsHindiInput.value = '';
+        lyricsHinglishInput.value = '';
+
+        loadSongs(); // Taaki list turant refresh ho
+      } catch (error) {
+        console.error('Add song error:', error);
+        showAdminStatus('Song save karte waqt error aaya.', true);
+      }
+    }
+
+    // ========== PWA INSTALL & SW ==========
+
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installPwaButton) {
+        installPwaButton.classList.remove('hidden');
+      }
+    });
+
+    if (installPwaButton) {
+      installPwaButton.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('PWA choice:', outcome);
+        deferredPrompt = null;
+        installPwaButton.classList.add('hidden');
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(console.error);
+      });
+    }
+
+    // ========== EVENT LISTENERS ==========
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Tabs
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const screen = btn.dataset.screen;
+          if (screen === 'home') showScreen('home');
+          if (screen === 'aradhana') showScreen('aradhana');
+          if (screen === 'prabhuBhoj') showScreen('prabhuBhoj');
+          if (screen === 'bible') {
+            showScreen('bible');
+            if (!bibleData.length) loadBibleData(); // Bible data yahan load hoga
+          }
+          if (screen === 'admin') showScreen('admin');
+        });
+      });
+
+      // songs filters
+      searchInput.addEventListener('input', applySongFilters);
+      languageFilter.addEventListener('change', applySongFilters);
+
+      favoriteToggle.addEventListener('click', () => {
+        favoritesOnly = !favoritesOnly;
+        favoriteToggle.classList.toggle('bg-yellow-400/20', favoritesOnly);
+        favoriteToggle.classList.toggle('border-yellow-400/60', favoritesOnly);
+        favoriteToggle.innerHTML = favoritesOnly
+          ? '<i class="fa-solid fa-star text-yellow-300"></i><span>Only favourites</span>'
+          : '<i class="fa-regular fa-star"></i><span>Favourites</span>';
+        applySongFilters();
+      });
+
+      // song detail actions
+      toggleLanguageBtn.addEventListener('click', () => {
+        currentLanguage = currentLanguage === 'hindi' ? 'hinglish' : 'hindi';
+        toggleLanguageBtn.textContent =
+          currentLanguage === 'hindi' ? 'Hindi' : 'Hinglish';
+        renderLyrics();
+      });
+
+      favoriteSongBtn.addEventListener('click', () => {
+        if (!currentSong) return;
+        toggleFavorite(currentSong.id);
+        updateFavoriteButton(isFavorite(currentSong.id));
+        applySongFilters();
+      });
+
+      // Bible dropdowns
+      bookSelect.addEventListener('change', () => handleBookChange(false)); 
+      chapterSelect.addEventListener('change', handleChapterChange);
+      verseSelect.addEventListener('change', handleVerseChange);
+
+      // Admin
+      adminLoginBtn.addEventListener('click', () => {
+        const pin = adminPinInput.value.trim();
+        if (pin === ADMIN_PIN) {
+          isAdmin = true;
+          adminLoginError.classList.add('hidden');
+          adminPinInput.value = '';
+          updateAdminUI();
+        } else {
+          adminLoginError.classList.remove('hidden');
+        }
+      });
+
+      adminLogoutBtn.addEventListener('click', () => {
+        isAdmin = false;
+        updateAdminUI();
+      });
+
+      addSongBtn.addEventListener('click', addSong);
+
+      // init
+      updateAdminUI();
+      loadSongs(); // Yeh tabhi chalega agar firebaseConfig sahi hai
+      showScreen('home');
+    });
+  </script>
+</body>
+
+</html>
