@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Worship App</title>
+  <title>Worship App - Emmanuel Church</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -27,6 +27,7 @@
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background: radial-gradient(circle at top, #1e293b, #020617);
       color: #e5e7eb;
+      font-size: 16px;
     }
 
     .scrollbar-thin::-webkit-scrollbar {
@@ -59,25 +60,29 @@
     .badge-pill {
       @apply text-[10px] inline-flex items-center px-2 py-0.5 rounded-full bg-slate-800 border border-slate-600 text-slate-300;
     }
+
+    /* Install Button Animation */
+    .btn-install {
+       @apply hidden inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-xs font-bold bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 animate-pulse gap-2 transition;
+    }
   </style>
 </head>
 
-<body class="min-h-screen text-slate-100">
-  <div class="max-w-4xl mx-auto px-3 py-4 sm:py-6">
+<body class="min-h-screen text-slate-100 flex flex-col">
+  <div class="max-w-4xl mx-auto px-3 py-4 sm:py-6 flex-grow w-full">
     <header class="mb-4">
       <div class="flex items-center justify-between gap-3">
         <div>
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
-            <i class="fa-solid fa-music text-blue-400"></i>
+            <i class="fa-solid fa-church text-blue-400"></i>
             Worship App
           </h1>
           <p class="text-xs sm:text-sm text-slate-400">
-            Songs • Aradhana • Prabhu Bhoj • Pavitra Bible
+            CNI Emmanuel Church, Mirzapur
           </p>
         </div>
-        <button id="installPwaButton"
-          class="hidden btn-ghost text-[11px] sm:text-xs gap-1 whitespace-nowrap">
-          <i class="fa-solid fa-download text-blue-400"></i>
+        <button id="installPwaButton" class="btn-install">
+          <i class="fa-solid fa-download"></i>
           Install App
         </button>
       </div>
@@ -112,7 +117,7 @@
       </div>
     </header>
 
-    <main class="glass rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-900/40 space-y-4">
+    <main class="glass rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-900/40 space-y-4 min-h-[60vh]">
 
       <section id="homeScreen" class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -154,8 +159,8 @@
               <i class="fa-solid fa-hashtag text-[9px]"></i>
               <span></span>
             </p>
-            <h2 id="songTitleHindi" class="text-lg font-semibold"></h2>
-            <p id="songTitleHinglish" class="text-xs text-slate-400"></p>
+            <h2 id="songTitleHindi" class="text-xl font-bold tracking-wide text-white"></h2>
+            <p id="songTitleHinglish" class="text-sm text-slate-400 italic"></p>
           </div>
           <div class="flex flex-col items-end gap-2">
             <button id="toggleLanguageBtn" class="btn-ghost text-[11px]">
@@ -170,80 +175,77 @@
         </div>
 
         <article id="lyricsContainer"
-          class="text-[13px] leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto scrollbar-thin border border-slate-700/70 rounded-2xl p-3 bg-slate-950/60">
+          class="text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-line scrollbar-thin border border-slate-700/70 rounded-2xl p-4 bg-slate-950/60 text-slate-200 font-medium mb-6">
         </article>
       </section>
 
       <section id="aradhanaScreen" class="hidden space-y-3 text-sm">
-        <h2 class="text-lg font-semibold flex items-center gap-2">
-          <i class="fa-solid fa-hands-praying text-blue-400"></i>
+        <h2 class="text-lg font-semibold flex items-center gap-2 text-yellow-400">
+          <i class="fa-solid fa-hands-praying"></i>
           Aradhana Section
         </h2>
-        <p class="text-slate-300 text-xs">
+        <p class="text-slate-300 text-sm leading-relaxed">
           Yahaan tum future me Aradhana ke special geet / order of service / notes add kar sakte ho. Filhaal placeholder text hai.
         </p>
       </section>
 
       <section id="prabhuBhojScreen" class="hidden space-y-3 text-sm">
-        <h2 class="text-lg font-semibold flex items-center gap-2">
-          <i class="fa-solid fa-bread-slice text-blue-400"></i>
+        <h2 class="text-lg font-semibold flex items-center gap-2 text-red-400">
+          <i class="fa-solid fa-bread-slice"></i>
           Prabhu Bhoj Section
         </h2>
-        <p class="text-slate-300 text-xs">
+        <p class="text-slate-300 text-sm leading-relaxed">
           Yahaan Prabhu Bhoj ke geet, readings, ya instructions laa sakte ho. Abhi basic placeholder hai.
         </p>
       </section>
 
       <section id="bibleScreen" class="hidden space-y-4">
         <div class="sticky top-0 pb-2 bg-gradient-to-b from-slate-900/95 to-slate-900/0 z-10">
-          <h2 class="text-lg font-semibold flex items-center gap-2">
-            <i class="fa-solid fa-book-bible text-blue-400"></i>
+          <h2 class="text-lg font-semibold flex items-center gap-2 text-emerald-400">
+            <i class="fa-solid fa-book-bible"></i>
             Pavitra Bible (Hindi)
           </h2>
           
-          <div class="mt-3 flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
-            
-            <div class="flex-1 order-1">
-              <label class="block text-[10px] text-slate-400 mb-1">Book</label>
+          <div class="mt-2 grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[9px] text-slate-400 mb-1">Book</label>
               <select id="bookSelect"
-                class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Book select karo…</option>
+                class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <option value="">Book</option>
               </select>
             </div>
 
-            <div class="w-full sm:w-28 order-2">
-              <label class="block text-[10px] text-slate-400 mb-1">Chapter</label>
+            <div>
+              <label class="block text-[9px] text-slate-400 mb-1">Chap</label>
               <select id="chapterSelect"
-                class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-2 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 disabled>
-                <option value="">Chapter…</option>
+                <option value="">Ch</option>
               </select>
             </div>
 
-            <div class="w-full sm:w-24 order-3">
-              <label class="block text-[10px] text-slate-400 mb-1">Verse</label>
+            <div>
+              <label class="block text-[9px] text-slate-400 mb-1">Verse</label>
               <select id="verseSelect"
-                class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-2 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 disabled>
-                <option value="">Verse…</option>
+                <option value="">Vs</option>
               </select>
             </div>
-
+          </div>
           </div>
 
-        </div>
-
         <div id="bibleContent"
-          class="text-[13px] leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto scrollbar-thin border border-slate-700/70 rounded-2xl p-3 bg-slate-950/60">
-          <p class="text-slate-400 text-xs">
-            Kripya pehle koi Book select karein.
+          class="text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-line scrollbar-thin border border-slate-700/70 rounded-2xl p-4 bg-slate-950/60 text-slate-200 font-medium mt-2 mb-6">
+          <p class="text-sm text-slate-400 text-center mt-10">
+            Padhne ke liye koi Book select karein.
           </p>
         </div>
       </section>
 
       <section id="adminScreen" class="hidden space-y-4 text-sm">
-        <h2 class="text-lg font-semibold flex items-center gap-2">
-          <i class="fa-solid fa-user-shield text-blue-400"></i>
+        <h2 class="text-lg font-semibold flex items-center gap-2 text-pink-400">
+          <i class="fa-solid fa-user-shield"></i>
           Admin Panel
         </h2>
 
@@ -253,9 +255,9 @@
           </p>
           <div class="flex gap-2">
             <input id="adminPinInput" type="password" maxlength="6"
-              class="flex-1 rounded-xl bg-slate-950/80 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex-1 rounded-xl bg-slate-950/80 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
               placeholder="PIN..." />
-            <button id="adminLoginBtn" class="btn-primary text-xs px-3">
+            <button id="adminLoginBtn" class="btn-primary text-xs px-3 bg-pink-600 hover:bg-pink-500">
               Login
             </button>
           </div>
@@ -323,18 +325,22 @@
       </section>
     </main>
 
-    <footer class="mt-4 text-[10px] text-center text-slate-500">
-      Made for church worship • 0₹ setup • Firebase + Netlify
+    <div class="text-[11px] text-slate-400 text-center mt-4">
+      App created for (CNI) Emmanuel Church, Mirzapur.<br>
+      By : <span class="text-blue-400 font-semibold">Abhishek Masih</span> • 2025
+    </div>
+    <footer class="text-[11px] text-slate-500 text-center mt-3 pb-4 pt-3 border-t border-slate-700/40">
+      Worship App • Designed & Developed by 
+      <span class="text-blue-400 font-semibold">Abhishek Masih</span><br>
+      © 2025 All Rights Reserved
     </footer>
-  </div>
+    </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
   <script>
     // ========== FIREBASE CONFIG ==========
-    
-    // ⭐️ YAHAN AAPKA CONFIG DAAL DIYA HAI ⭐️
     const firebaseConfig = {
       apiKey: "AIzaSyCbn4wCltG1YrrfmUeoOmOvzzQsyxZVkhY",
       authDomain: "worship-3eedf.firebaseapp.com",
@@ -344,30 +350,20 @@
       appId: "1:1000732372247:web:ec746fc5db5dabd35a1b52"
     };
 
-    // --- YAHAN SE NEECHE KUCH CHANGE MAT KARNA ---
-
-    // Global 'db' variable define kar rahe hain
     let db;
     let app;
 
     try {
       app = firebase.initializeApp(firebaseConfig);
-      db = firebase.firestore(); // db ko yahan assign kar rahe hain
+      db = firebase.firestore();
     } catch (e) {
       console.error("Firebase initialization error:", e);
       if (e.code === 'INVALID_CONFIG_KEYS') {
-        alert("FIREBASE CONFIG ERROR: \n\nAapne 'firebaseConfig' object ko 'index.html' file mein update nahi kiya hai. \n\nAapke songs tab tak load nahi honge jab tak aap Firebase project se sahi keys daal nahi dete.");
-      }
-      // Hide loading text and show error
-      const songListError = document.getElementById('songList');
-      if (songListError) {
-        songListError.innerHTML = '<p class="text-xs text-red-400">Firebase se connect nahi ho paaya. Kya aapne firebaseConfig update kiya?</p>';
+        alert("Firebase Config Error!");
       }
     }
 
-
     // ========== DOM ELEMENTS ==========
-
     const tabs = document.querySelectorAll('.tab-btn');
     const screens = {
       home: document.getElementById('homeScreen'),
@@ -415,30 +411,26 @@
     const addSongBtn = document.getElementById('addSongBtn');
     const adminStatusMsg = document.getElementById('adminStatusMsg');
 
-    // PWA install
+    // Install Button
     const installPwaButton = document.getElementById('installPwaButton');
 
     // ========== STATE ==========
-
     let allSongs = [];
     let filteredSongs = [];
     let favoritesOnly = false;
     let currentSong = null;
-    let currentLanguage = 'hindi'; // 'hindi' | 'hinglish'
+    let currentLanguage = 'hindi';
     let bibleData = [];
     let currentBibleBook = null;
     const ADMIN_PIN = '1844';
     let isAdmin = false;
 
     // ========== HELPERS ==========
-
     function getFavoriteIds() {
       try {
         const raw = localStorage.getItem('favoriteSongs');
         return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
-      }
+      } catch (e) { return []; }
     }
 
     function setFavoriteIds(ids) {
@@ -452,11 +444,8 @@
     function toggleFavorite(id) {
       const ids = getFavoriteIds();
       const index = ids.indexOf(id);
-      if (index === -1) {
-        ids.push(id);
-      } else {
-        ids.splice(index, 1);
-      }
+      if (index === -1) ids.push(id);
+      else ids.splice(index, 1);
       setFavoriteIds(ids);
     }
 
@@ -471,9 +460,7 @@
     }
 
     function showScreen(screenName) {
-      // hide all
       Object.values(screens).forEach(sec => sec.classList.add('hidden'));
-      // home -> list, not detail
       if (screenName === 'home') {
         screens.home.classList.remove('hidden');
         songDetailScreen.classList.add('hidden');
@@ -490,23 +477,15 @@
     }
 
     // ========== SONGS (FIRESTORE) ==========
-
     async function loadSongs() {
-      // Check karte hain ki 'db' properly initialize hua ya nahi
-      if (typeof db === 'undefined') {
-        console.log("db not initialized. Skipping loadSongs.");
-        return; // Agar db nahi hai toh function rok do
-      }
+      if (typeof db === 'undefined') return;
       try {
         const snapshot = await db.collection('songs').orderBy('serialNumber').get();
-        allSongs = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        allSongs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         applySongFilters();
       } catch (error) {
         console.error('Error loading songs:', error);
-        songList.innerHTML = '<p class="text-xs text-red-400">Songs load nahi ho paaye. Check console (F12).</p>';
+        songList.innerHTML = '<p class="text-xs text-red-400">Geet load nahi ho paye.</p>';
       }
     }
 
@@ -516,51 +495,36 @@
       const favIds = getFavoriteIds();
 
       filteredSongs = allSongs.filter(song => {
-        // favourite filter
         if (favoritesOnly && !favIds.includes(song.id)) return false;
-
-        // language filter check
         if (lang === 'hindi' && !song.title_hindi) return false;
         if (lang === 'hinglish' && !song.title_hinglish) return false;
 
-        // search filter
         if (!query) return true;
         const num = (song.serialNumber || '').toString();
         const h = (song.title_hindi || '').toLowerCase();
         const r = (song.title_hinglish || '').toLowerCase();
         const lh = (song.lyrics_hindi || '').toLowerCase();
-        const lr = (song.lyrics_hinglish || '').toLowerCase();
-
-        return (
-          num.includes(query) ||
-          h.includes(query) ||
-          r.includes(query) ||
-          lh.includes(query) ||
-          lr.includes(query)
-        );
+        
+        return (num.includes(query) || h.includes(query) || r.includes(query) || lh.includes(query));
       });
-
       renderSongList();
     }
 
     function renderSongList() {
-      if (!filteredSongs.length && allSongs.length > 0) { // Check added ki songs load hue but filter match nahi hua
-        songList.innerHTML = '<p class="text-xs text-slate-400">Is filter se koi geet nahi mila.</p>';
+      if (!filteredSongs.length && allSongs.length > 0) {
+        songList.innerHTML = '<p class="text-xs text-slate-400 text-center mt-10">Koi geet nahi mila.</p>';
         return;
       }
-      
-      if (!allSongs.length) { // Yeh tabhi dikhega jab allSongs array hi khaali hai
-        songList.innerHTML = '<p class="text-xs text-slate-400">Loading songs...</p>'; // Ya error message loadSongs se aa jayega
+      if (!allSongs.length) {
+        songList.innerHTML = '<p class="text-xs text-slate-400 text-center mt-10">Loading songs...</p>';
         return;
       }
 
       const favIds = getFavoriteIds();
-
       songList.innerHTML = '';
       filteredSongs.forEach(song => {
         const li = document.createElement('button');
-        li.className =
-          'w-full flex items-start gap-3 px-3 py-2 rounded-2xl bg-slate-900/70 hover:bg-slate-800/80 border border-slate-800 text-left transition';
+        li.className = 'w-full flex items-start gap-3 px-3 py-3 rounded-2xl bg-slate-900/70 hover:bg-slate-800/80 border border-slate-800 text-left transition';
         li.innerHTML = `
           <div class="mt-0.5">
             <span class="badge-pill flex items-center gap-1">
@@ -569,7 +533,7 @@
             </span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium truncate">
+            <p class="text-sm font-bold truncate text-slate-200">
               ${song.title_hindi || 'Untitled'}
             </p>
             <p class="text-[11px] text-slate-400 truncate">
@@ -577,10 +541,7 @@
             </p>
           </div>
           <div class="flex flex-col items-end gap-1">
-            <span class="text-[10px] text-slate-500 uppercase">
-              Song
-            </span>
-            <i class="${favIds.includes(song.id) ? 'fa-solid' : 'fa-regular'} fa-star text-[11px] ${favIds.includes(song.id) ? 'text-yellow-400' : 'text-slate-500'}"></i>
+            <i class="${favIds.includes(song.id) ? 'fa-solid' : 'fa-regular'} fa-star text-[12px] ${favIds.includes(song.id) ? 'text-yellow-400' : 'text-slate-500'}"></i>
           </div>
         `;
         li.addEventListener('click', () => openSongDetail(song.id));
@@ -600,22 +561,14 @@
 
       toggleLanguageBtn.textContent = 'Hindi';
       renderLyrics();
-
-      const fav = isFavorite(song.id);
-      updateFavoriteButton(fav);
-
+      updateFavoriteButton(isFavorite(song.id));
       showScreen('songDetail');
     }
 
     function renderLyrics() {
       if (!currentSong) return;
-      let text =
-        currentLanguage === 'hindi'
-          ? currentSong.lyrics_hindi || ''
-          : currentSong.lyrics_hinglish || '';
-      if (!text) {
-        text = 'Lyrics available nahi hain.';
-      }
+      let text = currentLanguage === 'hindi' ? currentSong.lyrics_hindi || '' : currentSong.lyrics_hinglish || '';
+      if (!text) text = 'Lyrics available nahi hain.';
       lyricsContainer.textContent = text;
     }
 
@@ -624,182 +577,166 @@
       favoriteSongBtn.classList.toggle('text-slate-200', !isFav);
       favoriteSongBtn.innerHTML = `
         <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i>
-        <span>${isFav ? 'Favourite hai' : 'Favourite banao'}</span>
+        <span>${isFav ? 'Favourite' : 'Favourite'}</span>
       `;
     }
 
-    // ========== BIBLE ==========
-// Bible functions for bible.json structure:
-// [
-//   {
-//     "book": "उत्पत्ति",
-//     "chapters": [
-//       {
-//         "chapter": 1,
-//         "verses": [
-//           { "verse": 1, "text": "..." }
-//         ]
-//       }
-//     ]
-//   }
-// ]
+    // ========== BIBLE (UNIVERSAL FIX) ==========
+    
+    async function loadBibleData() {
+      try {
+        const response = await fetch('./bible.json');
+        if (!response.ok) throw new Error('File not found');
+        
+        const jsonData = await response.json();
+        // Handle both {bible:[]} and []
+        bibleData = jsonData.bible || jsonData; 
+        
+        populateBookSelect();
 
-async function loadBibleData() {
-  try {
-    const response = await fetch('./bible.json');
-    if (!response.ok) throw new Error('Bible data file not found');
-
-    // bible.json is a plain array (not wrapped in { bible: [...] })
-    bibleData = await response.json();
-
-    populateBookSelect();
-
-    // Default: first book + first chapter load karo (agar available ho)
-    if (bibleData.length > 0) {
-      bookSelect.value = "0";
-      handleBookChange(true);
+        if (bibleData.length > 0) {
+          bookSelect.value = "0"; 
+          handleBookChange(true); 
+        }
+      } catch (error) {
+        console.error('Bible load error:', error);
+        bibleContent.innerHTML = '<p class="text-center mt-10 text-red-400">Bible download nahi ho payi.</p>';
+      }
     }
-  } catch (error) {
-    console.error('Bible load error:', error);
-    bibleContent.innerHTML =
-      '<p class="text-xs text-red-400 text-center">Bible data load nahi ho paaya. bible.json ko check karein.</p>';
-  }
-}
 
-function populateBookSelect() {
-  bookSelect.innerHTML = '<option value="">Book select karo…</option>';
+    function populateBookSelect() {
+      bookSelect.innerHTML = '<option value="">Book</option>'; // Updated Placeholder
+      bibleData.forEach((book, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        // Support both formats
+        opt.textContent = book.book_name || book.book || book.name;
+        bookSelect.appendChild(opt);
+      });
+      chapterSelect.innerHTML = '<option value="">Ch</option>';
+      chapterSelect.disabled = true;
+      verseSelect.innerHTML = '<option value="">Vs</option>';
+      verseSelect.disabled = true;
+      bibleContent.innerHTML = '<p class="text-center mt-10 text-slate-500">Upar kitab chunein.</p>';
+    }
 
-  bibleData.forEach((book, index) => {
-    const opt = document.createElement('option');
-    opt.value = index;
-    opt.textContent = book.book; // Hindi book name
-    bookSelect.appendChild(opt);
-  });
+    function handleBookChange(isDefaultLoad = false) { 
+      const index = parseInt(bookSelect.value, 10);
+      if (isNaN(index)) {
+        currentBibleBook = null;
+        chapterSelect.disabled = true;
+        verseSelect.disabled = true;
+        return;
+      }
 
-  chapterSelect.innerHTML = '<option value="">Chapter…</option>';
-  chapterSelect.disabled = true;
-  verseSelect.innerHTML = '<option value="">Verse…</option>';
-  verseSelect.disabled = true;
+      currentBibleBook = bibleData[index];
+      
+      chapterSelect.disabled = false;
+      chapterSelect.innerHTML = '<option value="">Ch</option>';
+      
+      // Support both formats for Chapters
+      const chapters = currentBibleBook.chapters || [];
+      chapters.forEach(ch => {
+        const opt = document.createElement('option');
+        const chNum = ch.chapter_no || ch.chapter || ch.id;
+        opt.value = chNum;
+        opt.textContent = chNum;
+        chapterSelect.appendChild(opt);
+      });
 
-  bibleContent.innerHTML =
-    '<p class="text-xs text-slate-400">Kripya pehle koi Book select karein.</p>';
-}
+      verseSelect.innerHTML = '<option value="">Vs</option>';
+      verseSelect.disabled = true;
 
-function handleBookChange(isDefaultLoad = false) {
-  const index = parseInt(bookSelect.value, 10);
-  if (isNaN(index)) {
-    currentBibleBook = null;
-    chapterSelect.innerHTML = '<option value="">Chapter…</option>';
-    chapterSelect.disabled = true;
-    verseSelect.innerHTML = '<option value="">Verse…</option>';
-    verseSelect.disabled = true;
-    bibleContent.innerHTML =
-      '<p class="text-xs text-slate-400">Kripya pehle koi Book select karein.</p>';
-    return;
-  }
+      if (isDefaultLoad && chapters.length > 0) {
+        chapterSelect.value = "1"; 
+        handleChapterChange(); 
+      }
+    }
 
-  currentBibleBook = bibleData[index];
+    function handleChapterChange() {
+      if (!currentBibleBook) return;
+      const chapterNum = parseInt(chapterSelect.value, 10);
+      
+      const chapterObj = currentBibleBook.chapters.find(
+        ch => (ch.chapter_no || ch.chapter || ch.id) == chapterNum
+      );
+      
+      if (!chapterObj) return;
 
-  // chapter dropdown
-  chapterSelect.disabled = false;
-  chapterSelect.innerHTML = '<option value="">Chapter…</option>';
-  currentBibleBook.chapters.forEach(ch => {
-    const opt = document.createElement('option');
-    opt.value = ch.chapter;       // number like 1,2,3...
-    opt.textContent = ch.chapter;
-    chapterSelect.appendChild(opt);
-  });
+      verseSelect.disabled = false;
+      verseSelect.innerHTML = '<option value="">All</option>';
+      
+      const verses = chapterObj.verses || [];
+      verses.forEach(v => {
+        const opt = document.createElement('option');
+        // Handle mixed types (string vs int)
+        let vNum = v.verse_no || v.verse;
+        // If v.verse is text string, use v.verse_no
+        if(typeof vNum === 'string' && vNum.length > 5) vNum = v.verse_no;
 
-  // verse reset
-  verseSelect.innerHTML = '<option value="">Verse…</option>';
-  verseSelect.disabled = true;
+        opt.value = vNum;
+        opt.textContent = vNum;
+        verseSelect.appendChild(opt);
+      });
 
-  if (isDefaultLoad && currentBibleBook.chapters.length > 0) {
-    chapterSelect.value = String(currentBibleBook.chapters[0].chapter);
-    handleChapterChange();
-  } else if (!isDefaultLoad) {
-    bibleContent.innerHTML =
-      '<p class="text-xs text-slate-400">Ab chapter select karein.</p>';
-  }
-}
+      renderVerses(chapterObj, null);
+    }
 
-function handleChapterChange() {
-  if (!currentBibleBook) return;
-  const chapterNum = parseInt(chapterSelect.value, 10);
+    function handleVerseChange() {
+      if (!currentBibleBook) return;
+      const chapterNum = parseInt(chapterSelect.value, 10);
+      const chapterObj = currentBibleBook.chapters.find(
+        ch => (ch.chapter_no || ch.chapter || ch.id) == chapterNum
+      );
+      if (!chapterObj) return;
 
-  const chapterObj = currentBibleBook.chapters.find(
-    ch => ch.chapter === chapterNum
-  );
+      const val = verseSelect.value;
+      if (val === "" || val === "All") {
+        renderVerses(chapterObj, null);
+      } else {
+        renderVerses(chapterObj, val);
+      }
+    }
 
-  if (!chapterObj) {
-    verseSelect.innerHTML = '<option value="">Verse…</option>';
-    verseSelect.disabled = true;
-    bibleContent.innerHTML =
-      '<p class="text-xs text-slate-400">Ab chapter select karein.</p>';
-    return;
-  }
+    function renderVerses(chapterObj, singleVerseNumber) {
+      bibleContent.innerHTML = '';
 
-  // verse dropdown
-  verseSelect.disabled = false;
-  verseSelect.innerHTML = '<option value="">All verses</option>';
-  chapterObj.verses.forEach(v => {
-    const opt = document.createElement('option');
-    opt.value = v.verse;
-    opt.textContent = v.verse;
-    verseSelect.appendChild(opt);
-  });
+      const bName = currentBibleBook.book_name || currentBibleBook.book;
+      const cNum = chapterObj.chapter_no || chapterObj.chapter;
 
-  renderVerses(chapterObj, null);
-}
+      const title = document.createElement('h3');
+      title.className = 'text-xl font-bold text-emerald-400 mb-4 border-b border-emerald-900/50 pb-2 sticky top-0 bg-slate-900/95 p-2';
+      title.textContent = `${bName} - ${cNum}`;
+      bibleContent.appendChild(title);
 
-function handleVerseChange() {
-  if (!currentBibleBook) return;
-  const chapterNum = parseInt(chapterSelect.value, 10);
-  const chapterObj = currentBibleBook.chapters.find(
-    ch => ch.chapter === chapterNum
-  );
-  if (!chapterObj) return;
+      const container = document.createElement('div');
+      // Updated style: bigger text, leading-loose
+      container.className = 'space-y-4 text-lg sm:text-xl leading-loose text-slate-200';
 
-  const verseNum = parseInt(verseSelect.value, 10);
-  if (isNaN(verseNum)) {
-    renderVerses(chapterObj, null);
-  } else {
-    renderVerses(chapterObj, verseNum);
-  }
-}
+      const verses = chapterObj.verses || [];
+      const versesToShow = singleVerseNumber
+        ? verses.filter(v => (v.verse_no || v.verse) == singleVerseNumber)
+        : verses;
 
-function renderVerses(chapterObj, singleVerseNumber) {
-  bibleContent.innerHTML = '';
+      if(versesToShow.length === 0) {
+        bibleContent.innerHTML += "<p class='text-center mt-5 text-slate-500'>Aayat nahi mili.</p>";
+        return;
+      }
 
-  const title = document.createElement('h3');
-  title.className =
-    'text-sm font-semibold text-slate-100 mb-2';
-  title.textContent = `${currentBibleBook.book} ${chapterObj.chapter}`;
-  bibleContent.appendChild(title);
+      versesToShow.forEach(v => {
+        const p = document.createElement('p');
+        // Universal text extraction
+        const vNum = v.verse_no || (typeof v.verse !== 'string' ? v.verse : v.verse_no);
+        const vText = v.text || v.verse; 
 
-  const container = document.createElement('div');
-  container.className =
-    'space-y-1 text-[13px] leading-relaxed';
+        p.innerHTML = `<span class="text-emerald-500 font-bold mr-2 text-base align-top border border-emerald-500/50 rounded px-1.5">${vNum}</span>${vText}`;
+        container.appendChild(p);
+      });
 
-  const versesToShow = singleVerseNumber
-    ? chapterObj.verses.filter(v => v.verse === singleVerseNumber)
-    : chapterObj.verses;
-
-  versesToShow.forEach(v => {
-    const p = document.createElement('p');
-    p.innerHTML = `<span class="text-[10px] text-blue-400 mr-1 font-semibold">${v.verse}.</span>${v.text}`;
-    container.appendChild(p);
-  });
-
-  bibleContent.appendChild(container);
-}
-
-// ========== (BIBLE FUNCTIONS END) ==========
-
-
+      bibleContent.appendChild(container);
+    }
 
     // ========== ADMIN ==========
-
     function updateAdminUI() {
       if (isAdmin) {
         adminLoginBox.classList.add('hidden');
@@ -809,23 +746,19 @@ function renderVerses(chapterObj, singleVerseNumber) {
         adminContent.classList.add('hidden');
       }
     }
-
     function showAdminStatus(msg, isError = false) {
       adminStatusMsg.textContent = msg;
       adminStatusMsg.classList.remove('hidden');
       adminStatusMsg.classList.toggle('text-red-400', isError);
       adminStatusMsg.classList.toggle('text-emerald-400', !isError);
-      setTimeout(() => {
-        adminStatusMsg.classList.add('hidden');
-      }, 3000);
+      setTimeout(() => { adminStatusMsg.classList.add('hidden'); }, 3000);
     }
 
     async function addSong() {
       if (typeof db === 'undefined') {
-        showAdminStatus('Firebase DB connected nahi hai.', true);
+        showAdminStatus('Database Error', true);
         return;
       }
-      
       const serial = parseInt(songSerialInput.value, 10);
       const titleH = songTitleHindiInput.value.trim();
       const titleR = songTitleHinglishInput.value.trim();
@@ -833,10 +766,9 @@ function renderVerses(chapterObj, singleVerseNumber) {
       const lyrR = lyricsHinglishInput.value.trim();
 
       if (!serial || !titleH) {
-        showAdminStatus('Serial number & Hindi title required hai.', true);
+        showAdminStatus('Serial No & Title zaroori hai', true);
         return;
       }
-
       try {
         await db.collection('songs').add({
           serialNumber: serial,
@@ -845,41 +777,51 @@ function renderVerses(chapterObj, singleVerseNumber) {
           lyrics_hindi: lyrH,
           lyrics_hinglish: lyrR
         });
-
-        showAdminStatus('Song save ho gaya ✅');
+        showAdminStatus('Geet Save Ho Gaya ✅');
         songSerialInput.value = '';
         songTitleHindiInput.value = '';
         songTitleHinglishInput.value = '';
         lyricsHindiInput.value = '';
         lyricsHinglishInput.value = '';
-
-        loadSongs(); // Taaki list turant refresh ho
+        loadSongs();
       } catch (error) {
         console.error('Add song error:', error);
-        showAdminStatus('Song save karte waqt error aaya.', true);
+        showAdminStatus('Error Saving Song', true);
       }
     }
 
-    // ========== PWA INSTALL & SW ==========
-
+    // ========== INSTALL BUTTON LOGIC ==========
     let deferredPrompt = null;
+    
+    // Check Standalone (Installed) Mode
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    if (!isStandalone) {
+        // Browser Mode: Button dikhao
+        if (installPwaButton) installPwaButton.classList.remove('hidden');
+    } else {
+        // App Mode: Button chupao
+        if (installPwaButton) installPwaButton.classList.add('hidden');
+    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      if (installPwaButton) {
-        installPwaButton.classList.remove('hidden');
-      }
+      if (installPwaButton) installPwaButton.classList.remove('hidden');
     });
 
     if (installPwaButton) {
       installPwaButton.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('PWA choice:', outcome);
-        deferredPrompt = null;
-        installPwaButton.classList.add('hidden');
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          if (outcome === 'accepted') {
+            installPwaButton.classList.add('hidden');
+          }
+        } else {
+          alert("Install karne ke liye:\nBrowser Menu (⋮) > 'Install App' / 'Add to Home Screen'");
+        }
       });
     }
 
@@ -890,9 +832,7 @@ function renderVerses(chapterObj, singleVerseNumber) {
     }
 
     // ========== EVENT LISTENERS ==========
-
     document.addEventListener('DOMContentLoaded', () => {
-      // Tabs
       tabs.forEach(btn => {
         btn.addEventListener('click', () => {
           const screen = btn.dataset.screen;
@@ -901,13 +841,12 @@ function renderVerses(chapterObj, singleVerseNumber) {
           if (screen === 'prabhuBhoj') showScreen('prabhuBhoj');
           if (screen === 'bible') {
             showScreen('bible');
-            if (!bibleData.length) loadBibleData(); // Bible data yahan load hoga
+            if (!bibleData.length) loadBibleData();
           }
           if (screen === 'admin') showScreen('admin');
         });
       });
 
-      // songs filters
       searchInput.addEventListener('input', applySongFilters);
       languageFilter.addEventListener('change', applySongFilters);
 
@@ -921,11 +860,9 @@ function renderVerses(chapterObj, singleVerseNumber) {
         applySongFilters();
       });
 
-      // song detail actions
       toggleLanguageBtn.addEventListener('click', () => {
         currentLanguage = currentLanguage === 'hindi' ? 'hinglish' : 'hindi';
-        toggleLanguageBtn.textContent =
-          currentLanguage === 'hindi' ? 'Hindi' : 'Hinglish';
+        toggleLanguageBtn.textContent = currentLanguage === 'hindi' ? 'Hindi' : 'Hinglish';
         renderLyrics();
       });
 
@@ -936,15 +873,12 @@ function renderVerses(chapterObj, singleVerseNumber) {
         applySongFilters();
       });
 
-      // Bible dropdowns
-      bookSelect.addEventListener('change', () => handleBookChange(false)); 
+      bookSelect.addEventListener('change', () => handleBookChange(false));
       chapterSelect.addEventListener('change', handleChapterChange);
       verseSelect.addEventListener('change', handleVerseChange);
 
-      // Admin
       adminLoginBtn.addEventListener('click', () => {
-        const pin = adminPinInput.value.trim();
-        if (pin === ADMIN_PIN) {
+        if (adminPinInput.value.trim() === ADMIN_PIN) {
           isAdmin = true;
           adminLoginError.classList.add('hidden');
           adminPinInput.value = '';
@@ -961,12 +895,10 @@ function renderVerses(chapterObj, singleVerseNumber) {
 
       addSongBtn.addEventListener('click', addSong);
 
-      // init
       updateAdminUI();
-      loadSongs(); // Yeh tabhi chalega agar firebaseConfig sahi hai
+      loadSongs();
       showScreen('home');
     });
   </script>
 </body>
-
 </html>
