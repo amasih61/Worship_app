@@ -214,7 +214,6 @@
                 <option value="">Book</option>
               </select>
             </div>
-
             <div>
               <label class="block text-[9px] text-slate-400 mb-1">Chap</label>
               <select id="chapterSelect"
@@ -223,7 +222,6 @@
                 <option value="">Ch</option>
               </select>
             </div>
-
             <div>
               <label class="block text-[9px] text-slate-400 mb-1">Verse</label>
               <select id="verseSelect"
@@ -233,7 +231,7 @@
               </select>
             </div>
           </div>
-          </div>
+        </div>
 
         <div id="bibleContent"
           class="text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-line scrollbar-thin border border-slate-700/70 rounded-2xl p-4 bg-slate-950/60 text-slate-200 font-medium mt-2 mb-6">
@@ -334,7 +332,7 @@
       <span class="text-blue-400 font-semibold">Abhishek Masih</span><br>
       © 2025 All Rights Reserved
     </footer>
-    </div>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -549,21 +547,31 @@
       });
     }
 
-    function openSongDetail(id) {
+    // ▼▼▼ UPDATED: Back Button & Smart Lyrics Logic ▼▼▼
+    function openSongDetail(id, pushHistory = true) {
       const song = allSongs.find(s => s.id === id);
       if (!song) return;
       currentSong = song;
-      currentLanguage = 'hindi';
+
+      // Smart Language Logic: Check if Hindi exists, if yes use it, else Hinglish
+      const hasHindi = song.lyrics_hindi && song.lyrics_hindi.trim().length > 0;
+      currentLanguage = hasHindi ? 'hindi' : 'hinglish';
 
       songSerialEl.textContent = song.serialNumber ?? '';
       songTitleHindiEl.textContent = song.title_hindi || '';
       songTitleHinglishEl.textContent = song.title_hinglish || '';
 
-      toggleLanguageBtn.textContent = 'Hindi';
+      toggleLanguageBtn.textContent = currentLanguage === 'hindi' ? 'Hindi' : 'Hinglish';
       renderLyrics();
       updateFavoriteButton(isFavorite(song.id));
       showScreen('songDetail');
+
+      // History Push for Back Button
+      if (pushHistory) {
+        history.pushState({ view: 'songDetail', id: id }, '', '#song');
+      }
     }
+    // ▲▲▲ UPDATE END ▲▲▲
 
     function renderLyrics() {
       if (!currentSong) return;
@@ -589,7 +597,6 @@
         if (!response.ok) throw new Error('File not found');
         
         const jsonData = await response.json();
-        // Handle both {bible:[]} and []
         bibleData = jsonData.bible || jsonData; 
         
         populateBookSelect();
@@ -605,11 +612,10 @@
     }
 
     function populateBookSelect() {
-      bookSelect.innerHTML = '<option value="">Book</option>'; // Updated Placeholder
+      bookSelect.innerHTML = '<option value="">Book</option>'; 
       bibleData.forEach((book, index) => {
         const opt = document.createElement('option');
         opt.value = index;
-        // Support both formats
         opt.textContent = book.book_name || book.book || book.name;
         bookSelect.appendChild(opt);
       });
@@ -634,7 +640,6 @@
       chapterSelect.disabled = false;
       chapterSelect.innerHTML = '<option value="">Ch</option>';
       
-      // Support both formats for Chapters
       const chapters = currentBibleBook.chapters || [];
       chapters.forEach(ch => {
         const opt = document.createElement('option');
@@ -669,9 +674,7 @@
       const verses = chapterObj.verses || [];
       verses.forEach(v => {
         const opt = document.createElement('option');
-        // Handle mixed types (string vs int)
         let vNum = v.verse_no || v.verse;
-        // If v.verse is text string, use v.verse_no
         if(typeof vNum === 'string' && vNum.length > 5) vNum = v.verse_no;
 
         opt.value = vNum;
@@ -710,7 +713,6 @@
       bibleContent.appendChild(title);
 
       const container = document.createElement('div');
-      // Updated style: bigger text, leading-loose
       container.className = 'space-y-4 text-lg sm:text-xl leading-loose text-slate-200';
 
       const verses = chapterObj.verses || [];
@@ -725,7 +727,6 @@
 
       versesToShow.forEach(v => {
         const p = document.createElement('p');
-        // Universal text extraction
         const vNum = v.verse_no || (typeof v.verse !== 'string' ? v.verse : v.verse_no);
         const vText = v.text || v.verse; 
 
@@ -792,15 +793,11 @@
 
     // ========== INSTALL BUTTON LOGIC ==========
     let deferredPrompt = null;
-    
-    // Check Standalone (Installed) Mode
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
     if (!isStandalone) {
-        // Browser Mode: Button dikhao
         if (installPwaButton) installPwaButton.classList.remove('hidden');
     } else {
-        // App Mode: Button chupao
         if (installPwaButton) installPwaButton.classList.add('hidden');
     }
 
@@ -846,6 +843,15 @@
           if (screen === 'admin') showScreen('admin');
         });
       });
+      
+      // ▼▼▼ UPDATED: Popstate Listener for Back Button ▼▼▼
+      window.addEventListener('popstate', (event) => {
+         if (!songDetailScreen.classList.contains('hidden')) {
+            // If detail is open, go back to home list
+            showScreen('home');
+         }
+      });
+      // ▲▲▲ UPDATE END ▲▲▲
 
       searchInput.addEventListener('input', applySongFilters);
       languageFilter.addEventListener('change', applySongFilters);
