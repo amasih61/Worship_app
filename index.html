@@ -67,6 +67,17 @@
     .btn-install {
        @apply hidden inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-xs font-bold bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 animate-pulse gap-2 transition;
     }
+    
+    /* Custom Select Styles */
+    .custom-select-wrapper {
+      position: relative;
+    }
+    
+    .custom-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: none;
+    }
 
     /* ========== LIGHT MODE STYLES ========== */
     body.light-mode {
@@ -138,7 +149,6 @@
     }
 
     /* ========== BIBLE FIXES FOR LIGHT MODE ========== */
-    /* Header ko solid white aur shadow dene ke liye */
     body.light-mode .bible-header-fix {
       background-color: rgba(255, 255, 255, 0.95) !important;
       border-bottom: 1px solid #e2e8f0 !important;
@@ -150,13 +160,18 @@
       color: #64748b !important;
     }
     
-    /* Light mode me verse highlight alag dikhe */
+    body.light-mode optgroup {
+        color: #0f172a;
+        background-color: #f8fafc;
+        font-weight: 700;
+    }
+    
     body.light-mode .bg-emerald-900\/50 {
-      background-color: #bbf7d0 !important; /* Light green */
+      background-color: #bbf7d0 !important;
     }
     body.light-mode .text-emerald-400, 
     body.light-mode .text-emerald-500 {
-      color: #059669 !important; /* Darker green text */
+      color: #059669 !important;
     }
   </style>
 </head>
@@ -193,16 +208,19 @@
           <i class="fa-solid fa-list-ul text-[11px]"></i>
           <span>Songs</span>
         </button>
+        
         <button data-screen="aradhana"
           class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
           <i class="fa-solid fa-hands-praying text-[11px]"></i>
-          <span>Aradhana</span>
+          <span>Aradhana Vidhi</span>
         </button>
+        
         <button data-screen="prabhuBhoj"
           class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
           <i class="fa-solid fa-bread-slice text-[11px]"></i>
           <span>Prabhu Bhoj</span>
         </button>
+        
         <button data-screen="bible"
           class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
           <i class="fa-solid fa-book-bible text-[11px]"></i>
@@ -228,12 +246,6 @@
             </span>
           </div>
           <div class="flex items-center gap-2 text-[11px]">
-            <select id="languageFilter"
-              class="rounded-2xl bg-slate-900/80 border border-slate-700 px-3 py-2 text-[11px] focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option value="all">All</option>
-              <option value="hindi">Hindi</option>
-              <option value="hinglish">Hinglish</option>
-            </select>
             <button id="favoriteToggle"
               class="btn-ghost h-9 px-3 flex items-center gap-1 text-[11px]">
               <i class="fa-regular fa-star"></i>
@@ -262,9 +274,6 @@
             <p id="songTitleHinglish" class="text-sm text-slate-400 italic"></p>
           </div>
           <div class="flex flex-col items-end gap-2">
-            <button id="toggleLanguageBtn" class="btn-ghost text-[11px]">
-              Hindi
-            </button>
             <button id="favoriteSongBtn"
               class="btn-ghost text-[11px] flex items-center gap-1">
               <i class="fa-regular fa-star"></i>
@@ -281,7 +290,7 @@
       <section id="aradhanaScreen" class="hidden space-y-3 text-sm">
         <h2 class="text-lg font-semibold flex items-center gap-2 text-yellow-400">
           <i class="fa-solid fa-hands-praying"></i>
-          Aradhana Section
+          आराधना विधि
         </h2>
         <p class="text-slate-300 text-sm leading-relaxed">
           Yahaan tum future me Aradhana ke special geet / order of service / notes add kar sakte ho. Filhaal placeholder text hai.
@@ -291,7 +300,7 @@
       <section id="prabhuBhojScreen" class="hidden space-y-3 text-sm">
         <h2 class="text-lg font-semibold flex items-center gap-2 text-red-400">
           <i class="fa-solid fa-bread-slice"></i>
-          Prabhu Bhoj Section
+          प्रभु भोज
         </h2>
         <p class="text-slate-300 text-sm leading-relaxed">
           Yahaan Prabhu Bhoj ke geet, readings, ya instructions laa sakte ho. Abhi basic placeholder hai.
@@ -306,29 +315,48 @@
           </h2>
           
           <div class="mt-2 grid grid-cols-3 gap-2">
+            
             <div>
               <label class="bible-label block text-[9px] text-slate-400 mb-1 ml-1">Book</label>
-              <select id="bookSelect"
-                class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500">
-                <option value="">Book</option>
-              </select>
+              <div class="custom-select-wrapper relative">
+                <select id="bookSelect"
+                  class="custom-select w-full bg-slate-950/80 border border-slate-700 rounded-lg pl-2 pr-6 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500 truncate appearance-none">
+                  <option value="">Book</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                  <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                </div>
+              </div>
             </div>
+
             <div>
               <label class="bible-label block text-[9px] text-slate-400 mb-1 ml-1">Chap</label>
-              <select id="chapterSelect"
-                class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                disabled>
-                <option value="">Ch</option>
-              </select>
+              <div class="custom-select-wrapper relative">
+                <select id="chapterSelect"
+                  class="custom-select w-full bg-slate-950/80 border border-slate-700 rounded-lg pl-2 pr-6 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500 appearance-none"
+                  disabled>
+                  <option value="">Ch</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                  <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                </div>
+              </div>
             </div>
+
             <div>
               <label class="bible-label block text-[9px] text-slate-400 mb-1 ml-1">Verse</label>
-              <select id="verseSelect"
-                class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                disabled>
-                <option value="">Vs</option>
-              </select>
+              <div class="custom-select-wrapper relative">
+                <select id="verseSelect"
+                  class="custom-select w-full bg-slate-950/80 border border-slate-700 rounded-lg pl-2 pr-6 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500 appearance-none"
+                  disabled>
+                  <option value="">Vs</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                  <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
 
@@ -395,15 +423,10 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="grid grid-cols-1">
               <div>
                 <label class="text-[11px] text-slate-400">Lyrics (Hindi)</label>
-                <textarea id="lyricsHindiInput" rows="4"
-                  class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-              </div>
-              <div>
-                <label class="text-[11px] text-slate-400">Lyrics (Hinglish)</label>
-                <textarea id="lyricsHinglishInput" rows="4"
+                <textarea id="lyricsHindiInput" rows="8"
                   class="w-full rounded-xl bg-slate-900/80 border border-slate-700 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
               </div>
             </div>
@@ -472,7 +495,7 @@
     };
 
     const searchInput = document.getElementById('searchInput');
-    const languageFilter = document.getElementById('languageFilter');
+    // languageFilter Removed
     const favoriteToggle = document.getElementById('favoriteToggle');
     const songList = document.getElementById('songList');
 
@@ -482,7 +505,7 @@
     const songTitleHindiEl = document.getElementById('songTitleHindi');
     const songTitleHinglishEl = document.getElementById('songTitleHinglish');
     const lyricsContainer = document.getElementById('lyricsContainer');
-    const toggleLanguageBtn = document.getElementById('toggleLanguageBtn');
+    // toggleLanguageBtn Removed
     const favoriteSongBtn = document.getElementById('favoriteSongBtn');
 
     // Bible
@@ -504,7 +527,7 @@
     const songTitleHindiInput = document.getElementById('songTitleHindiInput');
     const songTitleHinglishInput = document.getElementById('songTitleHinglishInput');
     const lyricsHindiInput = document.getElementById('lyricsHindiInput');
-    const lyricsHinglishInput = document.getElementById('lyricsHinglishInput');
+    // lyricsHinglishInput Removed
     const addSongBtn = document.getElementById('addSongBtn');
     const adminStatusMsg = document.getElementById('adminStatusMsg');
 
@@ -517,7 +540,7 @@
     let filteredSongs = [];
     let favoritesOnly = false;
     let currentSong = null;
-    let currentLanguage = 'hindi';
+    // currentLanguage removed (always Hindi)
     let bibleData = [];
     let currentBibleBook = null;
     const ADMIN_PIN = '1844';
@@ -635,13 +658,11 @@
 
     function applySongFilters() {
       const query = (searchInput.value || '').toLowerCase();
-      const lang = languageFilter.value;
+      // Removed language filtering logic
       const favIds = getFavoriteIds();
 
       filteredSongs = allSongs.filter(song => {
         if (favoritesOnly && !favIds.includes(song.id)) return false;
-        if (lang === 'hindi' && !song.title_hindi) return false;
-        if (lang === 'hinglish' && !song.title_hinglish) return false;
 
         if (!query) return true;
         const num = (song.serialNumber || '').toString();
@@ -698,14 +719,11 @@
       if (!song) return;
       currentSong = song;
 
-      const hasHindi = song.lyrics_hindi && song.lyrics_hindi.trim().length > 0;
-      currentLanguage = hasHindi ? 'hindi' : 'hinglish';
-
+      // Always Hindi now
       songSerialEl.textContent = song.serialNumber ?? '';
       songTitleHindiEl.textContent = song.title_hindi || '';
       songTitleHinglishEl.textContent = song.title_hinglish || '';
 
-      toggleLanguageBtn.textContent = currentLanguage === 'hindi' ? 'Hindi' : 'Hinglish';
       renderLyrics();
       updateFavoriteButton(isFavorite(song.id));
       showScreen('songDetail');
@@ -717,7 +735,7 @@
 
     function renderLyrics() {
       if (!currentSong) return;
-      let text = currentLanguage === 'hindi' ? currentSong.lyrics_hindi || '' : currentSong.lyrics_hinglish || '';
+      let text = currentSong.lyrics_hindi || '';
       if (!text) text = 'Lyrics available nahi hain.';
       lyricsContainer.textContent = text;
     }
@@ -731,7 +749,7 @@
       `;
     }
 
-    // ========== BIBLE UPDATED LOGIC ==========
+    // ========== BIBLE LOGIC ==========
     async function loadBibleData() {
       try {
         const response = await fetch('./bible.json');
@@ -754,12 +772,33 @@
 
     function populateBookSelect() {
       bookSelect.innerHTML = '<option value="">Book</option>'; 
+      
+      // CREATE GROUPS
+      const otGroup = document.createElement('optgroup');
+      otGroup.label = "Purana Niyam (Old Testament)";
+      otGroup.className = "font-semibold text-slate-400 bg-slate-900";
+
+      const ntGroup = document.createElement('optgroup');
+      ntGroup.label = "Naya Niyam (New Testament)";
+      ntGroup.className = "font-semibold text-slate-400 bg-slate-900";
+
       bibleData.forEach((book, index) => {
         const opt = document.createElement('option');
         opt.value = index;
         opt.textContent = book.book_name || book.book || book.name;
-        bookSelect.appendChild(opt);
+        opt.className = "text-slate-200 bg-slate-800";
+
+        // 0-38 are Old Testament (39 Books)
+        if (index < 39) {
+            otGroup.appendChild(opt);
+        } else {
+            ntGroup.appendChild(opt);
+        }
       });
+
+      bookSelect.appendChild(otGroup);
+      bookSelect.appendChild(ntGroup);
+
       chapterSelect.innerHTML = '<option value="">Ch</option>';
       chapterSelect.disabled = true;
       verseSelect.innerHTML = '<option value="">Vs</option>';
@@ -838,17 +877,24 @@
       if (!chapterObj) return;
 
       const val = verseSelect.value;
+      
       renderVerses(chapterObj, val);
+
+      if (val !== "" && val !== "All") {
+         setTimeout(() => {
+            verseSelect.value = ""; 
+            verseSelect.blur();
+         }, 1000); 
+      }
     }
 
-    // UPDATED RENDER FUNCTION
+    // RENDER FUNCTION
     function renderVerses(chapterObj, targetVerseNum) {
       bibleContent.innerHTML = '';
 
       const bName = currentBibleBook.book_name || currentBibleBook.book;
       const cNum = chapterObj.chapter_no || chapterObj.chapter;
 
-      // NO STICKY TITLE (Clean scroll)
       const title = document.createElement('h3');
       title.className = 'text-2xl font-bold text-emerald-500 mb-6 mt-2 border-b border-emerald-900/30 pb-2 px-2';
       title.textContent = `${bName} - ${cNum}`;
@@ -869,7 +915,6 @@
         const vNum = v.verse_no || (typeof v.verse !== 'string' ? v.verse : v.verse_no);
         const vText = v.text || v.verse; 
         
-        // Add ID for Scrolling & better styling
         p.id = `verse-${vNum}`;
         p.className = "transition-colors duration-1000 p-2 rounded hover:bg-slate-800/30 border-l-2 border-transparent hover:border-emerald-500/30"; 
 
@@ -884,7 +929,6 @@
         setTimeout(() => {
           const targetEl = document.getElementById(`verse-${targetVerseNum}`);
           if (targetEl) {
-            // Add scroll margin so it doesn't hide behind the sticky header
             targetEl.style.scrollMarginTop = "160px";
             targetEl.scrollIntoView({ behavior: 'smooth' });
             targetEl.classList.add('bg-emerald-900/50');
@@ -923,7 +967,7 @@
       const titleH = songTitleHindiInput.value.trim();
       const titleR = songTitleHinglishInput.value.trim();
       const lyrH = lyricsHindiInput.value.trim();
-      const lyrR = lyricsHinglishInput.value.trim();
+      // const lyrR = lyricsHinglishInput.value.trim(); REMOVED
 
       if (!serial || !titleH) {
         showAdminStatus('Serial No & Title zaroori hai', true);
@@ -935,14 +979,13 @@
           title_hindi: titleH,
           title_hinglish: titleR,
           lyrics_hindi: lyrH,
-          lyrics_hinglish: lyrR
+          lyrics_hinglish: '' // Saving empty string for consistency
         });
         showAdminStatus('Geet Save Ho Gaya ✅');
         songSerialInput.value = '';
         songTitleHindiInput.value = '';
         songTitleHinglishInput.value = '';
         lyricsHindiInput.value = '';
-        lyricsHinglishInput.value = '';
         loadSongs();
       } catch (error) {
         console.error('Add song error:', error);
@@ -1009,7 +1052,7 @@
       });
 
       searchInput.addEventListener('input', applySongFilters);
-      languageFilter.addEventListener('change', applySongFilters);
+      // languageFilter removed
 
       favoriteToggle.addEventListener('click', () => {
         favoritesOnly = !favoritesOnly;
@@ -1021,11 +1064,7 @@
         applySongFilters();
       });
 
-      toggleLanguageBtn.addEventListener('click', () => {
-        currentLanguage = currentLanguage === 'hindi' ? 'hinglish' : 'hindi';
-        toggleLanguageBtn.textContent = currentLanguage === 'hindi' ? 'Hindi' : 'Hinglish';
-        renderLyrics();
-      });
+      // toggleLanguageBtn removed
 
       favoriteSongBtn.addEventListener('click', () => {
         if (!currentSong) return;
