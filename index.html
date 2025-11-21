@@ -218,7 +218,7 @@
         <button data-screen="prabhuBhoj"
           class="tab-btn rounded-xl px-2 py-1.5 flex items-center justify-center gap-1 text-slate-200">
           <i class="fa-solid fa-bread-slice text-[11px]"></i>
-          <span>Prabhu Bhoj</span>
+          <span>Prabhu Bhoj Vidhi</span>
         </button>
         
         <button data-screen="bible"
@@ -300,7 +300,7 @@
       <section id="prabhuBhojScreen" class="hidden space-y-3 text-sm">
         <h2 class="text-lg font-semibold flex items-center gap-2 text-red-400">
           <i class="fa-solid fa-bread-slice"></i>
-          प्रभु भोज
+          प्रभु भोज विधि
         </h2>
         <p class="text-slate-300 text-sm leading-relaxed">
           Yahaan Prabhu Bhoj ke geet, readings, ya instructions laa sakte ho. Abhi basic placeholder hai.
@@ -495,7 +495,6 @@
     };
 
     const searchInput = document.getElementById('searchInput');
-    // languageFilter Removed
     const favoriteToggle = document.getElementById('favoriteToggle');
     const songList = document.getElementById('songList');
 
@@ -505,7 +504,6 @@
     const songTitleHindiEl = document.getElementById('songTitleHindi');
     const songTitleHinglishEl = document.getElementById('songTitleHinglish');
     const lyricsContainer = document.getElementById('lyricsContainer');
-    // toggleLanguageBtn Removed
     const favoriteSongBtn = document.getElementById('favoriteSongBtn');
 
     // Bible
@@ -527,7 +525,6 @@
     const songTitleHindiInput = document.getElementById('songTitleHindiInput');
     const songTitleHinglishInput = document.getElementById('songTitleHinglishInput');
     const lyricsHindiInput = document.getElementById('lyricsHindiInput');
-    // lyricsHinglishInput Removed
     const addSongBtn = document.getElementById('addSongBtn');
     const adminStatusMsg = document.getElementById('adminStatusMsg');
 
@@ -540,7 +537,6 @@
     let filteredSongs = [];
     let favoritesOnly = false;
     let currentSong = null;
-    // currentLanguage removed (always Hindi)
     let bibleData = [];
     let currentBibleBook = null;
     const ADMIN_PIN = '1844';
@@ -627,19 +623,30 @@
     }
 
     function showScreen(screenName) {
-      Object.values(screens).forEach(sec => sec.classList.add('hidden'));
-      if (screenName === 'home') {
-        screens.home.classList.remove('hidden');
-        songDetailScreen.classList.add('hidden');
-      } else if (screenName === 'songDetail') {
-        screens.home.classList.add('hidden');
-        songDetailScreen.classList.remove('hidden');
+      // 1. Hide ALL screens from the screens map
+      Object.values(screens).forEach(sec => {
+        if(sec) sec.classList.add('hidden');
+      });
+
+      // 2. Show Specific Screen
+      if (screenName === 'songDetail') {
+        // If we want to show songDetail
+        screens.songDetail.classList.remove('hidden');
       } else {
+        // For home, aradhana, prabhuBhoj, bible, admin
         const sec = screens[screenName];
         if (sec) sec.classList.remove('hidden');
-        songDetailScreen.classList.add('hidden');
       }
+
+      // 3. Handle history hash glitch
+      // Agar hum 'songDetail' par nahi hain aur URL me #song laga hai, to usse hata do
+      if (screenName !== 'songDetail' && window.location.hash === '#song') {
+         history.pushState(null, null, ' '); 
+      }
+
+      // 4. Set Tab State
       setActiveTab(screenName === 'songDetail' ? 'home' : screenName);
+      
       window.scrollTo(0, 0);
     }
 
@@ -658,7 +665,6 @@
 
     function applySongFilters() {
       const query = (searchInput.value || '').toLowerCase();
-      // Removed language filtering logic
       const favIds = getFavoriteIds();
 
       filteredSongs = allSongs.filter(song => {
@@ -719,7 +725,6 @@
       if (!song) return;
       currentSong = song;
 
-      // Always Hindi now
       songSerialEl.textContent = song.serialNumber ?? '';
       songTitleHindiEl.textContent = song.title_hindi || '';
       songTitleHinglishEl.textContent = song.title_hinglish || '';
@@ -967,7 +972,6 @@
       const titleH = songTitleHindiInput.value.trim();
       const titleR = songTitleHinglishInput.value.trim();
       const lyrH = lyricsHindiInput.value.trim();
-      // const lyrR = lyricsHinglishInput.value.trim(); REMOVED
 
       if (!serial || !titleH) {
         showAdminStatus('Serial No & Title zaroori hai', true);
@@ -1052,8 +1056,7 @@
       });
 
       searchInput.addEventListener('input', applySongFilters);
-      // languageFilter removed
-
+      
       favoriteToggle.addEventListener('click', () => {
         favoritesOnly = !favoritesOnly;
         favoriteToggle.classList.toggle('bg-yellow-400/20', favoritesOnly);
@@ -1063,8 +1066,6 @@
           : '<i class="fa-regular fa-star"></i><span>Favourites</span>';
         applySongFilters();
       });
-
-      // toggleLanguageBtn removed
 
       favoriteSongBtn.addEventListener('click', () => {
         if (!currentSong) return;
