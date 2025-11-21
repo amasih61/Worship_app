@@ -28,6 +28,7 @@
       background: radial-gradient(circle at top, #1e293b, #020617);
       color: #e5e7eb;
       font-size: 16px;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .scrollbar-thin::-webkit-scrollbar {
@@ -43,6 +44,7 @@
       background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.85));
       backdrop-filter: blur(22px);
       border: 1px solid rgba(148, 163, 184, 0.3);
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .chip {
@@ -65,6 +67,97 @@
     .btn-install {
        @apply hidden inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-xs font-bold bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 animate-pulse gap-2 transition;
     }
+
+    /* ========== LIGHT MODE STYLES ========== */
+    body.light-mode {
+      background: radial-gradient(circle at top, #f1f5f9, #e2e8f0);
+      color: #1e293b;
+    }
+
+    /* Override Text Colors in Light Mode */
+    body.light-mode .text-slate-100,
+    body.light-mode .text-slate-200,
+    body.light-mode .text-slate-300,
+    body.light-mode .text-slate-400 {
+      color: #334155 !important;
+    }
+    
+    body.light-mode .text-slate-500 {
+      color: #64748b !important;
+    }
+
+    /* Override Backgrounds & Borders in Light Mode */
+    body.light-mode .glass {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .bg-slate-900,
+    body.light-mode .bg-slate-950,
+    body.light-mode .bg-slate-900\/70,
+    body.light-mode .bg-slate-900\/80,
+    body.light-mode .bg-slate-950\/60,
+    body.light-mode .bg-slate-950\/80,
+    body.light-mode .bg-slate-900\/95 {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* Buttons & Inputs in Light Mode */
+    body.light-mode .btn-ghost {
+      background-color: #f8fafc !important;
+      color: #334155 !important;
+      border-color: #cbd5e1 !important;
+    }
+    
+    body.light-mode input,
+    body.light-mode select,
+    body.light-mode textarea {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+
+    body.light-mode .badge-pill {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #475569 !important;
+    }
+    
+    /* Song List Items Light Mode */
+    body.light-mode #songList button {
+      background-color: #ffffff !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    /* Tab Buttons Active State Fix for Light Mode */
+    body.light-mode .tab-btn.bg-slate-100 {
+      background-color: #0f172a !important; 
+      color: #f8fafc !important;
+    }
+
+    /* ========== BIBLE FIXES FOR LIGHT MODE ========== */
+    /* Header ko solid white aur shadow dene ke liye */
+    body.light-mode .bible-header-fix {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      color: #0f172a !important;
+    }
+    
+    body.light-mode .bible-label {
+      color: #64748b !important;
+    }
+    
+    /* Light mode me verse highlight alag dikhe */
+    body.light-mode .bg-emerald-900\/50 {
+      background-color: #bbf7d0 !important; /* Light green */
+    }
+    body.light-mode .text-emerald-400, 
+    body.light-mode .text-emerald-500 {
+      color: #059669 !important; /* Darker green text */
+    }
   </style>
 </head>
 
@@ -81,10 +174,16 @@
             CNI Emmanuel Church, Mirzapur
           </p>
         </div>
-        <button id="installPwaButton" class="btn-install">
-          <i class="fa-solid fa-download"></i>
-          Install App
-        </button>
+        
+        <div class="flex items-center gap-2">
+          <button id="themeToggleBtn" class="btn-ghost px-3 py-1.5 flex items-center gap-2 rounded-xl border border-slate-600/50">
+             </button>
+
+          <button id="installPwaButton" class="btn-install">
+            <i class="fa-solid fa-download"></i>
+            Install App
+          </button>
+        </div>
       </div>
 
       <div
@@ -159,7 +258,7 @@
               <i class="fa-solid fa-hashtag text-[9px]"></i>
               <span></span>
             </p>
-            <h2 id="songTitleHindi" class="text-xl font-bold tracking-wide text-white"></h2>
+            <h2 id="songTitleHindi" class="text-xl font-bold tracking-wide text-white text-slate-100"></h2>
             <p id="songTitleHinglish" class="text-sm text-slate-400 italic"></p>
           </div>
           <div class="flex flex-col items-end gap-2">
@@ -199,23 +298,23 @@
         </p>
       </section>
 
-      <section id="bibleScreen" class="hidden space-y-4">
-        <div class="sticky top-0 pb-2 bg-gradient-to-b from-slate-900/95 to-slate-900/0 z-10">
-          <h2 class="text-lg font-semibold flex items-center gap-2 text-emerald-400">
+      <section id="bibleScreen" class="hidden space-y-0">
+        <div class="bible-header-fix sticky top-0 pt-2 pb-3 px-1 z-20 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 transition-colors duration-300">
+          <h2 class="text-lg font-semibold flex items-center gap-2 text-emerald-400 px-1">
             <i class="fa-solid fa-book-bible"></i>
             Pavitra Bible (Hindi)
           </h2>
           
           <div class="mt-2 grid grid-cols-3 gap-2">
             <div>
-              <label class="block text-[9px] text-slate-400 mb-1">Book</label>
+              <label class="bible-label block text-[9px] text-slate-400 mb-1 ml-1">Book</label>
               <select id="bookSelect"
                 class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500">
                 <option value="">Book</option>
               </select>
             </div>
             <div>
-              <label class="block text-[9px] text-slate-400 mb-1">Chap</label>
+              <label class="bible-label block text-[9px] text-slate-400 mb-1 ml-1">Chap</label>
               <select id="chapterSelect"
                 class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 disabled>
@@ -223,7 +322,7 @@
               </select>
             </div>
             <div>
-              <label class="block text-[9px] text-slate-400 mb-1">Verse</label>
+              <label class="bible-label block text-[9px] text-slate-400 mb-1 ml-1">Verse</label>
               <select id="verseSelect"
                 class="w-full bg-slate-950/80 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                 disabled>
@@ -234,7 +333,7 @@
         </div>
 
         <div id="bibleContent"
-          class="text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-line scrollbar-thin border border-slate-700/70 rounded-2xl p-4 bg-slate-950/60 text-slate-200 font-medium mt-2 mb-6">
+          class="text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-line p-4 pb-20 text-slate-200 font-medium min-h-[200px]">
           <p class="text-sm text-slate-400 text-center mt-10">
             Padhne ke liye koi Book select karein.
           </p>
@@ -409,8 +508,9 @@
     const addSongBtn = document.getElementById('addSongBtn');
     const adminStatusMsg = document.getElementById('adminStatusMsg');
 
-    // Install Button
+    // Install Button & Theme Button
     const installPwaButton = document.getElementById('installPwaButton');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
 
     // ========== STATE ==========
     let allSongs = [];
@@ -422,6 +522,52 @@
     let currentBibleBook = null;
     const ADMIN_PIN = '1844';
     let isAdmin = false;
+    let isDarkMode = true;
+
+    // ========== THEME LOGIC ==========
+    function initTheme() {
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme === 'light') {
+        isDarkMode = false;
+        document.body.classList.add('light-mode');
+      } else {
+        isDarkMode = true;
+        document.body.classList.remove('light-mode');
+      }
+      updateThemeIcon(isDarkMode);
+    }
+
+    function updateThemeIcon(isDark) {
+        if (isDark) {
+            themeToggleBtn.innerHTML = `
+                <i class="fa-solid fa-sun text-yellow-400 text-base"></i>
+                <span class="text-[11px] font-medium text-slate-300 hidden sm:inline">Light</span>
+            `;
+        } else {
+            themeToggleBtn.innerHTML = `
+                <i class="fa-solid fa-moon text-slate-600 text-base"></i>
+                <span class="text-[11px] font-medium text-slate-700 hidden sm:inline">Dark</span>
+            `;
+        }
+    }
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            
+            if (isDarkMode) {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            }
+            updateThemeIcon(isDarkMode);
+        });
+    }
+    
+    initTheme();
+
 
     // ========== HELPERS ==========
     function getFavoriteIds() {
@@ -547,13 +693,11 @@
       });
     }
 
-    // ▼▼▼ UPDATED: Back Button & Smart Lyrics Logic ▼▼▼
     function openSongDetail(id, pushHistory = true) {
       const song = allSongs.find(s => s.id === id);
       if (!song) return;
       currentSong = song;
 
-      // Smart Language Logic: Check if Hindi exists, if yes use it, else Hinglish
       const hasHindi = song.lyrics_hindi && song.lyrics_hindi.trim().length > 0;
       currentLanguage = hasHindi ? 'hindi' : 'hinglish';
 
@@ -566,12 +710,10 @@
       updateFavoriteButton(isFavorite(song.id));
       showScreen('songDetail');
 
-      // History Push for Back Button
       if (pushHistory) {
         history.pushState({ view: 'songDetail', id: id }, '', '#song');
       }
     }
-    // ▲▲▲ UPDATE END ▲▲▲
 
     function renderLyrics() {
       if (!currentSong) return;
@@ -589,8 +731,7 @@
       `;
     }
 
-    // ========== BIBLE (UNIVERSAL FIX) ==========
-    
+    // ========== BIBLE UPDATED LOGIC ==========
     async function loadBibleData() {
       try {
         const response = await fetch('./bible.json');
@@ -652,8 +793,10 @@
       verseSelect.innerHTML = '<option value="">Vs</option>';
       verseSelect.disabled = true;
 
-      if (isDefaultLoad && chapters.length > 0) {
-        chapterSelect.value = "1"; 
+      // AUTO CHAPTER 1 LOAD LOGIC
+      if (chapters.length > 0) {
+        const firstChapterVal = chapters[0].chapter_no || chapters[0].chapter || chapters[0].id;
+        chapterSelect.value = firstChapterVal;
         handleChapterChange(); 
       }
     }
@@ -682,6 +825,7 @@
         verseSelect.appendChild(opt);
       });
 
+      // Default render all verses
       renderVerses(chapterObj, null);
     }
 
@@ -694,47 +838,62 @@
       if (!chapterObj) return;
 
       const val = verseSelect.value;
-      if (val === "" || val === "All") {
-        renderVerses(chapterObj, null);
-      } else {
-        renderVerses(chapterObj, val);
-      }
+      renderVerses(chapterObj, val);
     }
 
-    function renderVerses(chapterObj, singleVerseNumber) {
+    // UPDATED RENDER FUNCTION
+    function renderVerses(chapterObj, targetVerseNum) {
       bibleContent.innerHTML = '';
 
       const bName = currentBibleBook.book_name || currentBibleBook.book;
       const cNum = chapterObj.chapter_no || chapterObj.chapter;
 
+      // NO STICKY TITLE (Clean scroll)
       const title = document.createElement('h3');
-      title.className = 'text-xl font-bold text-emerald-400 mb-4 border-b border-emerald-900/50 pb-2 sticky top-0 bg-slate-900/95 p-2';
+      title.className = 'text-2xl font-bold text-emerald-500 mb-6 mt-2 border-b border-emerald-900/30 pb-2 px-2';
       title.textContent = `${bName} - ${cNum}`;
       bibleContent.appendChild(title);
 
       const container = document.createElement('div');
-      container.className = 'space-y-4 text-lg sm:text-xl leading-loose text-slate-200';
+      container.className = 'space-y-6 text-lg sm:text-xl leading-loose text-slate-200 px-1';
 
       const verses = chapterObj.verses || [];
-      const versesToShow = singleVerseNumber
-        ? verses.filter(v => (v.verse_no || v.verse) == singleVerseNumber)
-        : verses;
 
-      if(versesToShow.length === 0) {
+      if(verses.length === 0) {
         bibleContent.innerHTML += "<p class='text-center mt-5 text-slate-500'>Aayat nahi mili.</p>";
         return;
       }
 
-      versesToShow.forEach(v => {
+      verses.forEach(v => {
         const p = document.createElement('p');
         const vNum = v.verse_no || (typeof v.verse !== 'string' ? v.verse : v.verse_no);
         const vText = v.text || v.verse; 
+        
+        // Add ID for Scrolling & better styling
+        p.id = `verse-${vNum}`;
+        p.className = "transition-colors duration-1000 p-2 rounded hover:bg-slate-800/30 border-l-2 border-transparent hover:border-emerald-500/30"; 
 
-        p.innerHTML = `<span class="text-emerald-500 font-bold mr-2 text-base align-top border border-emerald-500/50 rounded px-1.5">${vNum}</span>${vText}`;
+        p.innerHTML = `<span class="text-emerald-500 font-bold mr-2 text-sm bg-emerald-900/20 px-2 py-0.5 rounded-full select-none">${vNum}</span>${vText}`;
         container.appendChild(p);
       });
 
       bibleContent.appendChild(container);
+
+      // SCROLL TO TARGET VERSE
+      if (targetVerseNum && targetVerseNum !== "" && targetVerseNum !== "All") {
+        setTimeout(() => {
+          const targetEl = document.getElementById(`verse-${targetVerseNum}`);
+          if (targetEl) {
+            // Add scroll margin so it doesn't hide behind the sticky header
+            targetEl.style.scrollMarginTop = "160px";
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+            targetEl.classList.add('bg-emerald-900/50');
+            setTimeout(() => {
+              targetEl.classList.remove('bg-emerald-900/50');
+            }, 2000);
+          }
+        }, 100);
+      }
     }
 
     // ========== ADMIN ==========
@@ -791,7 +950,7 @@
       }
     }
 
-    // ========== INSTALL BUTTON LOGIC ==========
+    // ========== INSTALL & INIT ==========
     let deferredPrompt = null;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
@@ -828,7 +987,6 @@
       });
     }
 
-    // ========== EVENT LISTENERS ==========
     document.addEventListener('DOMContentLoaded', () => {
       tabs.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -844,14 +1002,11 @@
         });
       });
       
-      // ▼▼▼ UPDATED: Popstate Listener for Back Button ▼▼▼
       window.addEventListener('popstate', (event) => {
          if (!songDetailScreen.classList.contains('hidden')) {
-            // If detail is open, go back to home list
             showScreen('home');
          }
       });
-      // ▲▲▲ UPDATE END ▲▲▲
 
       searchInput.addEventListener('input', applySongFilters);
       languageFilter.addEventListener('change', applySongFilters);
