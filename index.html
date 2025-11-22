@@ -78,6 +78,20 @@
       -webkit-appearance: none;
       background-image: none;
     }
+    
+    /* Verse Animation (AI Typewriter Effect) */
+    .verse-anim {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
     /* ========== LIGHT MODE STYLES ========== */
     body.light-mode {
@@ -110,7 +124,9 @@
     body.light-mode .bg-slate-900\/80,
     body.light-mode .bg-slate-950\/60,
     body.light-mode .bg-slate-950\/80,
-    body.light-mode .bg-slate-900\/95 {
+    body.light-mode .bg-slate-900\/95,
+    body.light-mode .bg-slate-800,
+    body.light-mode .bg-slate-950\/80 {
       background-color: #ffffff !important;
       border-color: #e2e8f0 !important;
     }
@@ -172,6 +188,10 @@
     body.light-mode .text-emerald-400, 
     body.light-mode .text-emerald-500 {
       color: #059669 !important;
+    }
+    
+    body.light-mode .bg-emerald-900\/20 {
+      background-color: #dcfce7 !important;
     }
   </style>
 </head>
@@ -361,10 +381,11 @@
         </div>
 
         <div id="bibleContent"
-          class="text-lg sm:text-xl leading-relaxed sm:leading-loose whitespace-pre-line p-4 pb-20 text-slate-200 font-medium min-h-[200px]">
-          <p class="text-sm text-slate-400 text-center mt-10">
-            Padhne ke liye koi Book select karein.
-          </p>
+          class="text-lg sm:text-xl leading-relaxed whitespace-pre-line p-4 pb-20 text-slate-200 font-medium min-h-[200px]">
+          <div class="flex flex-col items-center justify-center mt-16 opacity-70">
+             <i class="fa-solid fa-circle-notch animate-spin text-emerald-500 text-3xl mb-3"></i>
+             <p class="text-xs text-slate-400 animate-pulse">Pavitra Bible load ho rahi hai...</p>
+          </div>
         </div>
       </section>
 
@@ -622,31 +643,27 @@
       });
     }
 
+    // FIXED NAVIGATION
     function showScreen(screenName) {
-      // 1. Hide ALL screens from the screens map
+      // 1. Hide ALL screens
       Object.values(screens).forEach(sec => {
         if(sec) sec.classList.add('hidden');
       });
 
-      // 2. Show Specific Screen
+      // 2. Show specific screen
       if (screenName === 'songDetail') {
-        // If we want to show songDetail
         screens.songDetail.classList.remove('hidden');
       } else {
-        // For home, aradhana, prabhuBhoj, bible, admin
         const sec = screens[screenName];
         if (sec) sec.classList.remove('hidden');
       }
 
-      // 3. Handle history hash glitch
-      // Agar hum 'songDetail' par nahi hain aur URL me #song laga hai, to usse hata do
+      // 3. Fix URL glitch if returning from song detail
       if (screenName !== 'songDetail' && window.location.hash === '#song') {
          history.pushState(null, null, ' '); 
       }
 
-      // 4. Set Tab State
       setActiveTab(screenName === 'songDetail' ? 'home' : screenName);
-      
       window.scrollTo(0, 0);
     }
 
@@ -754,10 +771,19 @@
       `;
     }
 
-    // ========== BIBLE LOGIC ==========
+    // ========== BIBLE LOGIC UPDATED ==========
     async function loadBibleData() {
+      // Loading Indicator
+      bibleContent.innerHTML = `
+          <div class="flex flex-col items-center justify-center mt-16">
+             <i class="fa-solid fa-circle-notch animate-spin text-emerald-500 text-3xl mb-3"></i>
+             <p class="text-xs text-slate-400 animate-pulse">Pavitra Bible load ho rahi hai...</p>
+          </div>
+      `;
+
       try {
-        const response = await fetch('./bible.json');
+        // Cache busting v=time
+        const response = await fetch('./bible.json?v=' + new Date().getTime());
         if (!response.ok) throw new Error('File not found');
         
         const jsonData = await response.json();
@@ -771,14 +797,19 @@
         }
       } catch (error) {
         console.error('Bible load error:', error);
-        bibleContent.innerHTML = '<p class="text-center mt-10 text-red-400">Bible download nahi ho payi.</p>';
+        bibleContent.innerHTML = `
+            <div class="text-center mt-10 text-red-400 p-4 border border-red-500/50 rounded-xl bg-red-900/20">
+                <p class="font-bold mb-2"><i class="fa-solid fa-triangle-exclamation"></i> Error</p>
+                <p class="text-sm">Bible load nahi ho payi.</p>
+                <button onclick="loadBibleData()" class="mt-4 btn-ghost text-xs border border-slate-600 px-3 py-1">Retry</button>
+            </div>
+        `;
       }
     }
 
     function populateBookSelect() {
       bookSelect.innerHTML = '<option value="">Book</option>'; 
       
-      // CREATE GROUPS
       const otGroup = document.createElement('optgroup');
       otGroup.label = "Purana Niyam (Old Testament)";
       otGroup.className = "font-semibold text-slate-400 bg-slate-900";
@@ -793,12 +824,8 @@
         opt.textContent = book.book_name || book.book || book.name;
         opt.className = "text-slate-200 bg-slate-800";
 
-        // 0-38 are Old Testament (39 Books)
-        if (index < 39) {
-            otGroup.appendChild(opt);
-        } else {
-            ntGroup.appendChild(opt);
-        }
+        if (index < 39) otGroup.appendChild(opt);
+        else ntGroup.appendChild(opt);
       });
 
       bookSelect.appendChild(otGroup);
@@ -808,7 +835,6 @@
       chapterSelect.disabled = true;
       verseSelect.innerHTML = '<option value="">Vs</option>';
       verseSelect.disabled = true;
-      bibleContent.innerHTML = '<p class="text-center mt-10 text-slate-500">Upar kitab chunein.</p>';
     }
 
     function handleBookChange(isDefaultLoad = false) { 
@@ -848,11 +874,9 @@
     function handleChapterChange() {
       if (!currentBibleBook) return;
       const chapterNum = parseInt(chapterSelect.value, 10);
-      
       const chapterObj = currentBibleBook.chapters.find(
         ch => (ch.chapter_no || ch.chapter || ch.id) == chapterNum
       );
-      
       if (!chapterObj) return;
 
       verseSelect.disabled = false;
@@ -863,13 +887,11 @@
         const opt = document.createElement('option');
         let vNum = v.verse_no || v.verse;
         if(typeof vNum === 'string' && vNum.length > 5) vNum = v.verse_no;
-
         opt.value = vNum;
         opt.textContent = vNum;
         verseSelect.appendChild(opt);
       });
 
-      // Default render all verses
       renderVerses(chapterObj, null);
     }
 
@@ -882,7 +904,6 @@
       if (!chapterObj) return;
 
       const val = verseSelect.value;
-      
       renderVerses(chapterObj, val);
 
       if (val !== "" && val !== "All") {
@@ -893,7 +914,7 @@
       }
     }
 
-    // RENDER FUNCTION
+    // UPDATED RENDER FUNCTION (AI ANIMATION + GAP FIX)
     function renderVerses(chapterObj, targetVerseNum) {
       bibleContent.innerHTML = '';
 
@@ -901,12 +922,13 @@
       const cNum = chapterObj.chapter_no || chapterObj.chapter;
 
       const title = document.createElement('h3');
-      title.className = 'text-2xl font-bold text-emerald-500 mb-6 mt-2 border-b border-emerald-900/30 pb-2 px-2';
+      title.className = 'text-2xl font-bold text-emerald-500 mb-4 mt-2 border-b border-emerald-900/30 pb-2 px-2';
       title.textContent = `${bName} - ${cNum}`;
       bibleContent.appendChild(title);
 
       const container = document.createElement('div');
-      container.className = 'space-y-6 text-lg sm:text-xl leading-loose text-slate-200 px-1';
+      // Gap Fix: Changed space-y-6 to space-y-2
+      container.className = 'space-y-2 text-lg sm:text-xl leading-relaxed text-slate-200 px-1';
 
       const verses = chapterObj.verses || [];
 
@@ -915,33 +937,41 @@
         return;
       }
 
-      verses.forEach(v => {
+      // STAGGERED ANIMATION LOOP
+      bibleContent.appendChild(container);
+      
+      verses.forEach((v, index) => {
+        // Create Element
         const p = document.createElement('p');
         const vNum = v.verse_no || (typeof v.verse !== 'string' ? v.verse : v.verse_no);
         const vText = v.text || v.verse; 
         
         p.id = `verse-${vNum}`;
-        p.className = "transition-colors duration-1000 p-2 rounded hover:bg-slate-800/30 border-l-2 border-transparent hover:border-emerald-500/30"; 
+        // Base classes (hidden initially via .verse-anim opacity:0)
+        p.className = "verse-anim p-2 rounded hover:bg-slate-800/30 border-l-2 border-transparent hover:border-emerald-500/30"; 
+        
+        // Set Animation Delay for "Typewriter" feel
+        p.style.animationDelay = `${index * 0.03}s`; // Very fast stagger
 
         p.innerHTML = `<span class="text-emerald-500 font-bold mr-2 text-sm bg-emerald-900/20 px-2 py-0.5 rounded-full select-none">${vNum}</span>${vText}`;
+        
         container.appendChild(p);
       });
 
-      bibleContent.appendChild(container);
-
-      // SCROLL TO TARGET VERSE
+      // SCROLL TO TARGET (Delayed slightly to allow rendering)
       if (targetVerseNum && targetVerseNum !== "" && targetVerseNum !== "All") {
         setTimeout(() => {
           const targetEl = document.getElementById(`verse-${targetVerseNum}`);
           if (targetEl) {
             targetEl.style.scrollMarginTop = "160px";
             targetEl.scrollIntoView({ behavior: 'smooth' });
+            // Highlight effect
             targetEl.classList.add('bg-emerald-900/50');
             setTimeout(() => {
               targetEl.classList.remove('bg-emerald-900/50');
             }, 2000);
           }
-        }, 100);
+        }, verses.length * 30 + 100); // Wait for animation to finish approx
       }
     }
 
@@ -983,7 +1013,7 @@
           title_hindi: titleH,
           title_hinglish: titleR,
           lyrics_hindi: lyrH,
-          lyrics_hinglish: '' // Saving empty string for consistency
+          lyrics_hinglish: '' 
         });
         showAdminStatus('Geet Save Ho Gaya ✅');
         songSerialInput.value = '';
