@@ -32,6 +32,7 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
+    /* Hindi Content Font */
     .hindi-text {
         font-family: 'Mukta', sans-serif;
     }
@@ -76,8 +77,29 @@
       @apply text-[10px] inline-flex items-center px-2 py-0.5 rounded-full bg-slate-800 border border-slate-600 text-slate-300;
     }
 
+    /* Install Button CSS */
     .btn-install {
-       @apply hidden inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-xs font-bold bg-emerald-600/20 text-emerald-400 border border-emerald-500/50 animate-pulse gap-2 transition;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;   /* approx rounded-xl */
+      padding: 0.375rem 0.75rem; /* px-3 py-1.5 */
+      font-size: 0.75rem;        /* text-xs */
+      font-weight: 700;
+      background-color: rgba(5, 150, 105, 0.18);  /* emerald feel */
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.7);
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-install:hover {
+      background-color: rgba(5, 150, 105, 0.28);
+    }
+
+    .btn-install:active {
+      transform: scale(0.97);
     }
     
     .custom-select-wrapper {
@@ -230,7 +252,7 @@
           <button id="themeToggleBtn" class="btn-ghost px-3 py-1.5 flex items-center gap-2 rounded-xl border border-slate-600/50">
              </button>
 
-          <button id="installPwaButton" class="btn-install">
+          <button id="installPwaButton" class="btn-install hidden">
             <i class="fa-solid fa-download"></i>
             Install App
           </button>
@@ -603,6 +625,15 @@
     initTheme();
 
     // ========== HELPERS ==========
+    // Song Cache Helpers
+    function saveSongsCache(songs) {
+      try { localStorage.setItem('cachedSongs', JSON.stringify(songs)); } catch(e){}
+    }
+    
+    function loadSongsCache() {
+      try { return JSON.parse(localStorage.getItem('cachedSongs') || '[]'); } catch(e){ return []; }
+    }
+
     function getFavoriteIds() {
       try {
         const raw = localStorage.getItem('favoriteSongs');
@@ -659,17 +690,37 @@
       }
     }
 
-    // ========== SONGS (FIRESTORE) ==========
+    // ========== SONGS (OFFLINE + CACHE) ==========
     async function loadSongs() {
-      if (typeof db === 'undefined') return;
+      // 1. Load from Cache First (Instant)
+      const cached = loadSongsCache();
+      if (cached.length) {
+        allSongs = cached;
+        applySongFilters();
+        if (isAdmin) renderAdminSongList();
+      }
+
+      if (typeof db === 'undefined') {
+        if (!cached.length) {
+           songList.innerHTML = '<p class="text-xs text-red-400">Offline mode: No songs downloaded yet.</p>';
+        }
+        return;
+      }
+
       try {
+        // 2. Fetch Fresh from Firebase
         const snapshot = await db.collection('songs').orderBy('serialNumber').get();
         allSongs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // 3. Update Cache
+        saveSongsCache(allSongs);
         applySongFilters();
         if(isAdmin) renderAdminSongList();
       } catch (error) {
         console.error('Error loading songs:', error);
-        songList.innerHTML = '<p class="text-xs text-red-400">Failed to load songs. (Database Error)</p>';
+        if (!cached.length) {
+           songList.innerHTML = '<p class="text-xs text-red-400">Failed to load songs. (Check Internet)</p>';
+        }
       }
     }
 
@@ -743,11 +794,22 @@
       favoriteSongBtn.innerHTML = `<i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i><span>${isFav ? 'Favourite' : 'Favourite'}</span>`;
     }
 
-    // ========== BIBLE LOGIC (Smart Parse) ==========
-    async function loadBibleData() {
-      bibleContent.innerHTML = '<div class="flex flex-col items-center justify-center mt-16"><i class="fa-solid fa-circle-notch animate-spin text-emerald-500 text-3xl mb-3"></i><p class="text-xs text-slate-400 animate-pulse">Loading Pavitra Bible...</p></div>';
+    // ========== BIBLE LOGIC (Smart & Fast) ==========
+    async function loadBibleData(showLoader = true) {
+      // If already loaded, don't fetch again
+      if (bibleData && bibleData.length) return;
+
+      if (showLoader) {
+        bibleContent.innerHTML = 
+          '<div class="flex flex-col items-center justify-center mt-16">' +
+            '<i class="fa-solid fa-circle-notch animate-spin text-emerald-500 text-3xl mb-3"></i>' +
+            '<p class="text-xs text-slate-400 animate-pulse">Loading Pavitra Bible...</p>' +
+          '</div>';
+      }
+
       try {
-        const response = await fetch('./bible.json?v=' + new Date().getTime());
+        // Use cached version (removed ?v=) for speed
+        const response = await fetch('./bible.json');
         if (!response.ok) throw new Error('File not found');
         const jsonData = await response.json();
         bibleData = jsonData.bible || jsonData; 
@@ -783,64 +845,62 @@
       const chapters = currentBibleBook.chapters || [];
       chapters.forEach((ch, idx) => {
         const opt = document.createElement('option'); 
-        // Handle both array and object structures for chapters
-        const chNum = idx + 1; 
+        // SMART CHAPTER CHECK
+        const chNum = ch.chapter || ch.chapter_no || ch.id; 
         opt.value = chNum; opt.textContent = chNum; chapterSelect.appendChild(opt);
       });
       verseSelect.innerHTML = '<option value="">-</option>'; verseSelect.disabled = true;
       if (chapters.length > 0) { 
-          chapterSelect.value = "1"; handleChapterChange(); 
+          const firstChapterVal = chapters[0].chapter || chapters[0].chapter_no || chapters[0].id; 
+          chapterSelect.value = firstChapterVal; handleChapterChange(); 
       }
     }
 
     function handleChapterChange() {
       if (!currentBibleBook) return;
       const chapterNum = parseInt(chapterSelect.value, 10);
-      
-      // Access chapter by index (0-based)
-      const chapterData = currentBibleBook.chapters[chapterNum - 1];
-      if (!chapterData) return;
-
+      const chapterObj = currentBibleBook.chapters.find(ch => (ch.chapter || ch.chapter_no || ch.id) == chapterNum);
+      if (!chapterObj) return;
       verseSelect.disabled = false; verseSelect.innerHTML = '<option value="">All</option>';
-      
-      // chapterData is usually an array of strings in new JSON
-      chapterData.forEach((v, idx) => {
+      const verses = chapterObj.verses || [];
+      verses.forEach((v, idx) => {
         const opt = document.createElement('option'); 
-        const vNum = idx + 1;
+        // SMART VERSE CHECK
+        let vNum = v.verse || v.verse_no || (idx + 1);
         opt.value = vNum; opt.textContent = vNum; verseSelect.appendChild(opt);
       });
-      renderVerses(chapterData, null);
+      renderVerses(chapterObj, null);
     }
 
     function handleVerseChange() {
       if (!currentBibleBook) return;
       const chapterNum = parseInt(chapterSelect.value, 10);
-      const chapterData = currentBibleBook.chapters[chapterNum - 1];
-      if (!chapterData) return;
+      const chapterObj = currentBibleBook.chapters.find(ch => (ch.chapter || ch.chapter_no || ch.id) == chapterNum);
+      if (!chapterObj) return;
       const val = verseSelect.value;
-      renderVerses(chapterData, val);
+      renderVerses(chapterObj, val);
       if (val !== "" && val !== "All") { setTimeout(() => { verseSelect.value = ""; verseSelect.blur(); }, 1000); }
     }
 
-    function renderVerses(chapterData, targetVerseNum) {
+    function renderVerses(chapterObj, targetVerseNum) {
       bibleContent.innerHTML = '';
       // SMART NAME CHECK
       const bName = currentBibleBook.name || currentBibleBook.book || currentBibleBook.book_name;
-      const cNum = chapterSelect.value;
+      const cNum = chapterObj.chapter || chapterObj.chapter_no || chapterObj.id;
       const title = document.createElement('h3');
       title.className = 'text-2xl font-bold text-emerald-500 mb-4 mt-2 border-b border-emerald-900/30 pb-2 px-2';
       title.textContent = `${bName} - ${cNum}`;
       bibleContent.appendChild(title);
       const container = document.createElement('div');
       container.className = 'hindi-text space-y-2 text-lg sm:text-xl leading-relaxed text-slate-200 px-1';
-      
-      if(!chapterData || chapterData.length === 0) { bibleContent.innerHTML += "<p class='text-center mt-5 text-slate-500'>Verse not found.</p>"; return; }
+      const verses = chapterObj.verses || [];
+      if(verses.length === 0) { bibleContent.innerHTML += "<p class='text-center mt-5 text-slate-500'>Verse not found.</p>"; return; }
       bibleContent.appendChild(container);
-      
-      chapterData.forEach((v, index) => {
+      verses.forEach((v, index) => {
         const p = document.createElement('p');
-        const vNum = index + 1;
-        const vText = v; // Assuming v is string
+        // SMART TEXT CHECK
+        const vNum = v.verse || v.verse_no || (index + 1);
+        const vText = v.text || v; 
         p.id = `verse-${vNum}`;
         p.className = "verse-anim p-2 rounded hover:bg-slate-800/30 border-l-2 border-transparent hover:border-emerald-500/30"; 
         p.style.animationDelay = `${index * 0.01}s`;
@@ -854,7 +914,7 @@
             targetEl.style.scrollMarginTop = "160px"; targetEl.scrollIntoView({ behavior: 'smooth' });
             targetEl.classList.add('bg-emerald-900/50'); setTimeout(() => { targetEl.classList.remove('bg-emerald-900/50'); }, 2000);
           }
-        }, chapterData.length * 10 + 100);
+        }, verses.length * 10 + 100);
       }
     }
 
@@ -912,7 +972,57 @@
         }
     }
 
-    // ========== ADMIN LOGIC ==========
+    // ========== ADMIN LOGIC (INSTALL + UPDATE) ==========
+    let deferredPrompt = null;
+    const INSTALL_KEY = 'pwaInstalled';
+
+    function isAppStandalone() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    }
+
+    function hideInstallButton() {
+      if (installPwaButton) installPwaButton.classList.add('hidden');
+    }
+
+    function showInstallButton() {
+      if (!installPwaButton) return;
+      if (isAppStandalone()) { hideInstallButton(); return; }
+      if (localStorage.getItem(INSTALL_KEY) === 'yes') { hideInstallButton(); return; }
+      installPwaButton.classList.remove('hidden');
+    }
+
+    // First check on load
+    if (isAppStandalone() || localStorage.getItem(INSTALL_KEY) === 'yes') {
+      hideInstallButton();
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      showInstallButton();
+    });
+
+    window.addEventListener('appinstalled', () => {
+      localStorage.setItem(INSTALL_KEY, 'yes');
+      hideInstallButton();
+    });
+
+    if (installPwaButton) {
+      installPwaButton.addEventListener('click', async () => {
+        if (!deferredPrompt) {
+          alert("To Install:\nBrowser menu (⋮) > 'Install App' or 'Add to Home Screen'");
+          return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          localStorage.setItem(INSTALL_KEY, 'yes');
+          hideInstallButton();
+        }
+        deferredPrompt = null;
+      });
+    }
+
     function updateAdminUI() {
       if (isAdmin) { 
           adminLoginBox.classList.add('hidden'); 
@@ -987,7 +1097,7 @@
         cancelEditBtn.classList.add('hidden');
     }
 
-    // ADD SONG (Duplicate Check)
+    // ADD SONG
     async function addSong() {
       if (typeof db === 'undefined') { showAdminStatus('Database Error', true); return; }
       const serial = parseInt(songSerialInput.value, 10);
@@ -1055,24 +1165,6 @@
         }
     }
 
-    // ========== INSTALL & INIT ==========
-    let deferredPrompt = null;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (!isStandalone && installPwaButton) installPwaButton.classList.remove('hidden');
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault(); deferredPrompt = e; if (installPwaButton) installPwaButton.classList.remove('hidden');
-    });
-
-    if (installPwaButton) {
-      installPwaButton.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; deferredPrompt = null;
-          if (outcome === 'accepted') installPwaButton.classList.add('hidden');
-        } else { alert("To Install:\nClick Browser Menu (⋮) > 'Install App' or 'Add to Home Screen'"); }
-      });
-    }
-
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); }); }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -1127,7 +1219,16 @@
       deleteSongBtn.addEventListener('click', deleteSong);
       cancelEditBtn.addEventListener('click', resetAdminForm);
 
-      updateAdminUI(); loadSongs(); showScreen('home');
+      updateAdminUI(); 
+      loadSongs(); 
+      showScreen('home');
+
+      // 🔥 Background Preload Bible Logic
+      setTimeout(() => {
+        if (!bibleData.length) {
+          loadBibleData(false);   // false = quiet load (no loader)
+        }
+      }, 1200);
     });
   </script>
 </body>
