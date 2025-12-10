@@ -26,6 +26,8 @@
 
     html {
       font-size: 100%;
+      /* Smooth scrolling behavior */
+      scroll-behavior: smooth;
     }
 
     body {
@@ -48,16 +50,15 @@
       border-radius: 999px;
     }
 
+    /* PERFORMANCE FIX: 
+       Removed 'backdrop-filter: blur' and 'transform'.
+       This prevents the "White Screen" and "Zoom Lag" on mobile phones.
+       It uses a solid semi-transparent background instead.
+    */
     .glass {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.85));
-      backdrop-filter: blur(22px);
+      background: rgba(15, 23, 42, 0.96); /* Dark solid background with slight transparency */
       border: 1px solid rgba(148, 163, 184, 0.3);
-      transition: background 0.3s ease, border-color 0.3s ease;
-      
-      /* STABILITY FIX: Forces GPU rendering to prevent white screen glitch */
-      -webkit-transform: translate3d(0,0,0);
-      transform: translate3d(0,0,0);
-      will-change: transform;
+      /* No blur, No transform - Pure Performance */
     }
 
     .chip {
@@ -91,7 +92,7 @@
     }
 
     body.light-mode .glass {
-      background: linear-gradient(135deg, rgba(248, 250, 252, 0.92), rgba(226, 232, 240, 0.95));
+      background: rgba(248, 250, 252, 0.96); /* Light solid background */
       border-color: rgba(148, 163, 184, 0.6);
     }
 
